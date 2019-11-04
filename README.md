@@ -35,7 +35,7 @@
 
 ## **在线演示**
 
-- https://demo.cigofang.com
+- http://admin.demo.cigofang.com
 
 - 用户名：manager
 - 密　码：123456
