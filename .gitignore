@@ -1,11 +1,7 @@
 .DS_Store
-Thumbs.db
 /runtime
-.env
 .travis.yml
 .idea/
 !.gitignore
 vendor/
 thinkphp/
-composer.json
-composer.lock
