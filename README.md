@@ -25,9 +25,9 @@
     `composer install`
 - 数据库文件目录
 
-    `/attach/db/vx.x.x/*.sql`   mysqldump备份文件
+    `/attach/db/v_x.x.x/*.sql`   --mysqldump备份文件
     
-    `/attach/db/vx.x.x/*.nb3`   Navicat备份文件
+    `/attach/db/v_x.x.x/*.nb3`   --Navicat备份文件
     
 - 系统环境配置
 
