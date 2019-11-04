@@ -20,10 +20,24 @@
 
 
 ## 部署
+- 部署好代码后安装依赖
 
+    `composer install`
+- 数据库文件目录
 
-## 版本说明
+    `/attach/db/vx.x.x/*.sql`   mysqldump备份文件
+    
+    `/attach/db/vx.x.x/*.nb3`   Navicat备份文件
+    
+- 系统环境配置
 
-|  系列  | 最新版   |  文档  | 说明 |
-| -- | -- | -- | -- |
-|  0.0  |  0.0.1  |  暂无 |暂无|
+    `.env`
+
+## **在线演示**
+
+- https://demo.cigofang.com
+
+- 用户名：manager
+- 密　码：123456
+
+## Just enjoy it!
