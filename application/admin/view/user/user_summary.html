@@ -1,0 +1,176 @@
+<<{extend name="cigoadmin@public:editor" /}>>
+
+
+<<{block name="head-bottom"}>>
+<style type="text/css">
+    body {
+        padding: 8px;
+    }
+
+    legend {
+        width: auto;
+        border-bottom: 0px;
+    }
+</style>
+<<{/block}>>
+
+<<{block name="tool-bar-btns"}>>
+
+<<{/block}>>
+
+<<{block name="title-tool-bar"}>><<{/block}>>
+
+<<{block name="content"}>>
+<fieldset class="layui-elem-field">
+    <legend>注册终端</legend>
+    <div class="layui-field-box" style="float:right">
+        <button type="button" id="register" class="layui-btn layui-btn-normal layui-btn-xs pieShowBtn" data-type="1">
+            饼状图
+        </button>
+    </div>
+    <div class="layui-field-box" style="float:left">
+        <button class="btn btn-success btn-sm dataExport registerExportBtn" data-type="1">
+            <i class="fa fa-cloud-download"></i>导出
+        </button>
+    </div>
+    <div class="layui-field-box">
+        <table class="cigo-data-list layui-table" id="table-register">
+            <thead>
+            <tr>
+                <th></th>
+                <th>PC</th>
+                <th>Android</th>
+                <th>IOS</th>
+                <th>微信</th>
+                <th>手机网页</th>
+                <th>总计</th>
+            </tr>
+            </thead>
+            <tr>
+                <td>人数</td>
+                <td><<{$registClientType['pc']}>></td>
+                <td><<{$registClientType['Android']}>></td>
+                <td><<{$registClientType['IOS']}>></td>
+                <td><<{$registClientType['wx']}>></td>
+                <td><<{$registClientType['webpage']}>></td>
+                <td><<{$registClientType['all']}>></td>
+            </tr>
+            <tr>
+                <td>占比</td>
+                <td><<{$registClientType['pc_rate']}>>%</td>
+                <td><<{$registClientType['Android_rate']}>>%</td>
+                <td><<{$registClientType['IOS_rate']}>>%</td>
+                <td><<{$registClientType['wx_rate']}>>%</td>
+                <td><<{$registClientType['webpage_rate']}>>%</td>
+                <td><<{$registClientType['all_rate']}>>%</td>
+            </tr>
+        </table>
+    </div>
+</fieldset>
+
+<fieldset class="layui-elem-field">
+    <legend>最后活动终端</legend>
+    <div class="layui-field-box" style="float:right">
+        <button type="button" id="active" class="layui-btn layui-btn-normal layui-btn-xs activePieShowBtn"
+                data-type="2">饼状图
+        </button>
+    </div>
+    <div class="layui-field-box" style="float:left">
+        <button class="btn btn-success btn-sm dataExport registerExportBtn" data-type="2">
+            <i class="fa fa-cloud-download"></i>导出
+        </button>
+    </div>
+    <div class="layui-field-box">
+        <table id="data-lists" class="cigo-data-list layui-table">
+            <thead>
+            <tr>
+                <th></th>
+                <th>PC</th>
+                <th>Android</th>
+                <th>IOS</th>
+                <th>微信</th>
+                <th>手机网页</th>
+                <th>未知</th>
+                <th>总计</th>
+            </tr>
+            </thead>
+            <tr>
+                <td>人数</td>
+                <td><<{$lastActiveClient['pc']}>></td>
+                <td><<{$lastActiveClient['Android']}>></td>
+                <td><<{$lastActiveClient['IOS']}>></td>
+                <td><<{$lastActiveClient['wx']}>></td>
+                <td><<{$lastActiveClient['webpage']}>></td>
+                <td><<{$lastActiveClient['other']}>></td>
+                <td><<{$lastActiveClient['all']}>></td>
+            </tr>
+            <tr>
+                <td>占比</td>
+                <td><<{$lastActiveClient['pc_rate']}>>%</td>
+                <td><<{$lastActiveClient['Android_rate']}>>%</td>
+                <td><<{$lastActiveClient['IOS_rate']}>>%</td>
+                <td><<{$lastActiveClient['wx_rate']}>>%</td>
+                <td><<{$lastActiveClient['webpage_rate']}>>%</td>
+                <td><<{$lastActiveClient['other_rate']}>>%</td>
+                <td><<{$lastActiveClient['all_rate']}>>%</td>
+            </tr>
+        </table>
+    </div>
+</fieldset>
+<<{/block}>>
+
+<<{block name="js-footer"}>>
+<script type="text/javascript">
+    $(function () {
+        initEvent();
+    });
+
+    function initEvent() {
+        $('.pieShowBtn').click(function () {
+            cigoLayer.open({
+                title: ['饼状图', 'font-size: 16px;font-weight: bold;'],
+                type: 2,
+                area: ['95%', '95%'],
+                fix: false,
+                scrollbar: false,
+                maxmin: true,
+                shade: [0.5, '#ffffff'],
+                shadeClose: false,
+                skin: 'layui-layer-rim',
+                content: "<<{:url('pieShow', false, false)}>>" + Think.DEEP + 'type' + Think.DEEP + $(this).data('type'),
+                cancel: function (index, layero) {
+                    cigoLayer.close(index)
+                    return false;
+                }
+            });
+            return false;
+        });
+
+        $('.activePieShowBtn').click(function () {
+            cigoLayer.open({
+                title: ['饼状图', 'font-size: 16px;font-weight: bold;'],
+                type: 2,
+                area: ['95%', '95%'],
+                fix: false,
+                scrollbar: false,
+                maxmin: true,
+                shade: [0.5, '#ffffff'],
+                shadeClose: false,
+                skin: 'layui-layer-rim',
+                content: "<<{:url('pieShow', false, false)}>>" + Think.DEEP + 'type' + Think.DEEP + $(this).data('type'),
+                cancel: function (index, layero) {
+                    cigoLayer.close(index)
+                    return false;
+                }
+            });
+            return false;
+        });
+
+        $('.registerExportBtn').click(function () {
+            location.href = "<<{:url('exportAdmin', false, false)}>>" + Think.DEEP + 'type' + Think.DEEP + $(this).data('type');
+        });
+
+    }
+
+</script>
+<<{/block}>>

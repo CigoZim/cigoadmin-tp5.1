@@ -1,0 +1,256 @@
+<<{extend name="cigoadmin@public:editor" /}>>
+<<{block name="head-bottom"}>>
+<style type="text/css">
+    .dataItem {
+        display: inline-block;
+        width: 100%;
+        cursor: pointer;
+        text-align: center;
+    }
+
+    .dataItem:hover {
+        font-size: 18px;
+        font-weight: 500;
+    }
+</style>
+<link rel="stylesheet" type="text/css" href="__CIGO_PUBLIC__/layui-v2.4.5/layui/formSelects-v4.css" />
+<script type="text/javascript" src="__CIGO_PUBLIC__/layui-v2.4.5/layui/formSelects-v4.min.js"></script>
+<<{/block}>>
+
+<<{block name="title-tool-bar"}>><<{/block}>>
+
+<<{block name="content"}>>
+<!-- 筛选条件 -->
+<form class="layui-form layui-form-pane" action="">
+    <div class="layui-form-item">
+        <label class="layui-form-label">数据分组</label>
+        <div class="layui-input-inline">
+            <select name="orderGroup" lay-filter="orderGroup">
+                <option value="day" selected="">按日分组</option>
+                <option value="week">按周分组</option>
+                <option value="month">按月分组</option>
+                <option value="year">按年分组</option>
+            </select>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">筛选日期范围</label>
+            <div class="layui-input-inline" style="width: 360px;">
+                <input type="text" class="layui-input" id="dateRange" placeholder="开始 到 结束"/>
+            </div>
+        </div>
+        <label class="layui-form-label">用户类型</label>
+        <div class="layui-input-inline">
+            <select name="member_type" xm-select="select_type">
+                <<{foreach $memberType as $key=>$item}>>
+                <option value="<<{$key}>>"><<{$item}>></option>
+                <<{/foreach}>>
+            </select>
+        </div>
+        <div class="layui-inline">
+            <button type="button" id="query-btn" lay-filter="query-btn" class="btn btn-success">筛选</button>
+        </div>
+    </div>
+</form>
+<!-- 数据展现 -->
+<table class="layui-table" id="dataList" lay-filter="dataList"></table>
+<<{/block}>>
+
+<<{block name="js-footer"}>>
+<script type="text/javascript">
+    var orderGroup = 'day';
+    var dateRange = undefined;
+    var dataListTable;
+    var member_type = [];
+
+    function initView() {
+        //订单数据分组
+        cigoForm.on('select(orderGroup)', function (data) {
+            orderGroup = data.value;
+            // argsChange();
+        });
+        //筛选日期范围
+        cigoDate.render({
+            elem: '#dateRange'
+            , type: 'datetime'
+            , range: '到'
+            , format: 'yyyy年M月d日H时m分s秒'
+            , done: function (value, startDate, endDate) {
+                if (value == '') {
+                    dateRange = undefined;
+                } else {
+                    dateRange = {
+                        startDate: startDate.year + '/' + startDate.month + '/' + startDate.date + ' ' +
+                            startDate.hours + ':' + startDate.minutes + ':' + startDate.seconds,
+                        endDate: endDate.year + '/' + endDate.month + '/' + endDate.date + ' ' +
+                            endDate.hours + ':' + endDate.minutes + ':' + endDate.seconds
+                    };
+                }
+
+                // argsChange();
+            }
+        });
+
+        formSelects.render('select_type', {
+            //init:[],                        //默认值
+            skin: "normal",                 //多选皮肤
+            height: "38px",                 //是否固定高度, 38px | auto
+            radio: false,                   //是否设置为单选模式
+            direction: "auto",
+            create: function(id, name){
+                return Date.now();  //返回该标签对应的val
+            },
+            on: function (id, vals, val, isAdd, isDisabled) {
+
+                if(isAdd){
+                    member_type.push(val.value);
+                }else{
+                    var arr = [];
+                    $.each(member_type,function (i,item) {
+                        if(item != val.value){
+                            arr.push(item);
+                        }
+                    });
+                    member_type = arr;
+                }
+
+            },
+            searchType: "title",    //搜索框的位置
+            showCount: 0,           //多选的label数量, 0,负值,非数字则显示全部
+        });
+
+        $('#query-btn').click(function () {
+            argsChange();
+        });
+
+        //数据表格渲染
+        dataListTable = cigoTable.render({
+            elem: '#dataList',
+            title: '注册渠道数据表',
+            toolbar: '#tableToolBar',
+            defaultToolbar: ["filter", "exports"],
+            unresize: true,
+            method: 'post',
+            width: '100%',
+            height: 'full-100',
+            cellMinWidth: 80,
+            totalRow: true,
+            url: "<<{:url('getRegisterInfoList')}>>",
+            where: {orderGroup: orderGroup},
+            initSort: {field: 'rowFlag', type: 'desc'},
+            cols: [
+                [
+                    {type: 'checkbox', fixed: 'left', rowspan: 2},
+                    {
+                        title: '分组', sort: false, fixed: 'left', field: 'rowFlag',
+                        width: 140, totalRowText: '合计', rowspan: 2
+                    },
+                    {title: '注册用户数量', sort: false, align: 'center', colspan: 3},
+                ],
+                [
+                    {
+                        title: '总注册人数',
+                        sort: false,
+                        event: 'allRegister',
+                        field: 'allRegister',
+                        width: 500,
+                        totalRow: true,
+                        templet: function (dataItem) {
+                            return tdItemTmp(dataItem, 'allRegister');
+                        }
+                    },
+                    {
+                        title: '原始客户',
+                        sort: false,
+                        event: 'otherMember',
+                        field: 'otherMember',
+                        width: 500,
+                        totalRow: true,
+                        templet: function (dataItem) {
+                            return tdItemTmp(dataItem, 'otherMember');
+                        }
+                    },
+
+                    {
+                        title: '非原始客户',
+                        sort: false,
+                        field: 'inviteMember',
+                        width: 500,
+                        totalRow: true,
+                        event: 'inviteMember',
+                        templet: function (dataItem) {
+                            return tdItemTmp(dataItem, 'inviteMember');
+                        }
+                    },
+                ]]
+            , page: false
+        });
+    }
+
+    function tdItemTmp(dataItem, field, is_percent = false) {
+        if (is_percent) {
+            return (undefined === dataItem[field] || dataItem[field] == 0)
+                ? '-'
+                : dataItem[field] + (is_percent ? '(' + dataItem[field + '_percent'] + ')' : '');
+        }
+        return (undefined === dataItem[field])
+            ? '<span class="dataItem" title="点击查看详情">0.00</span>'
+            : '<span class="dataItem" title="点击查看详情">' + dataItem[field] + '</span>';
+    }
+
+
+    function initEvent() {
+        //表格工具栏事件
+        cigoTable.on('toolbar(dataList)', function (obj) {
+            switch (obj.event) {
+                case 'exportsBaseDataListForGoodsOrder':
+                    exportsBaseDataListForGoodsOrder();
+                    break;
+                case 'exportsBaseDataListForCourseOrder':
+                    exportsBaseDataListForCourseOrder();
+                    break;
+            }
+        });
+        //表格数据项点击事件
+        cigoTable.on('tool(dataList)', function (obj) {
+            switch (obj.event) {
+                case 'orderNum':
+                case 'orderMoney':
+                case 'orderRefundNum':
+                case 'orderRefundMoney':
+                case 'commissionCreated':
+                case 'commissionSend':
+                case 'commissionCreatedLevel1':
+                case 'commissionSendLevel1':
+                case 'commissionCreatedLevel2':
+                case 'commissionSendLevel2': {
+                    tdItemClick(obj.event, obj.data);
+                }
+                    break;
+            }
+        });
+    }
+
+
+    function argsChange() {
+        if (pageInitFlag) {
+            var where = {};
+            orderGroup !== undefined ? where['orderGroup'] = orderGroup : false;
+            dateRange !== undefined ? where['dateRange'] = dateRange : false;
+            member_type !== undefined ? where['member_type'] = member_type : false;
+            dataListTable.reload({
+                where: where
+            });
+        }
+    }
+
+    var pageInitFlag = false;
+    $(function () {
+        initView();
+        initEvent();
+        pageInitFlag = true;
+    });
+</script>
+<<{/block}>>
+
+
+

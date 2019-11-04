@@ -1,0 +1,78 @@
+<<{extend name="cigoadmin@public:editor"/}>>
+<<{block name="head-bottom"}>>
+<style type="text/css">
+    body {
+        padding: 8px;
+    }
+</style>
+<link rel="icon" href="https://jscdn.com.cn/highcharts/images/favicon.ico">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://code.highcharts.com.cn/highcharts/highcharts.js"></script>
+<script src="https://code.highcharts.com.cn/highcharts/modules/exporting.js"></script>
+<script src="https://img.hcharts.cn/highcharts-plugins/highcharts-zh_CN.js"></script>
+<<{/block}>>
+
+<<{block name="title-tool-bar"}>><<{/block}>>
+
+<<{block name="content"}>>
+<div id="container" style="min-width:400px;height:400px"></div>
+<<{/block}>>
+
+<<{block name="js-footer"}>>
+<script type="text/javascript">
+    // Build the chart
+    var chart;
+    var $y = JSON.parse('<?php echo json_encode($data); ?>');
+    $(function () {
+        chart = new Highcharts.chart('container', {
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie'
+            },
+            title: {
+                text: "占比"
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: false
+                    },
+                    showInLegend: true
+                }
+            },
+            series: [{
+                name: '占比',
+                colorByPoint: true,
+                data: [{
+                    name: 'pc',
+                    y: $y.pc_rate,
+                    sliced: true,
+                    selected: true
+                }, {
+                    name: 'Android',
+                    y: $y.Android_rate
+                }, {
+                    name: 'IOS',
+                    y: $y.IOS_rate
+                }, {
+                    name: 'wx',
+                    y: $y.wx_rate
+                }, {
+                    name: 'webpage',
+                    y: $y.webpage_rate
+                }, {
+                    name: 'Other',
+                    y: $y.other_rate
+                }]
+            }]
+        });
+    });
+</script>
+<<{/block}>>

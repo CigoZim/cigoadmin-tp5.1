@@ -1,0 +1,142 @@
+<<{extend name="cigoadmin@public:editor"/}>>
+<<{block name="head-bottom"}>>
+<script type="text/javascript" src="__CIGO_PUBLIC__/cigoos/cigoList.js"></script>
+<style type="text/css">
+</style>
+<<{/block}>>
+
+<<{block name="tool-bar-btns"}>>
+<a class="btn btn-primary addBtn" href="<<{:url('add')}>>">
+    <i class="fa fa-plus-square"></i>
+    添加菜单/权限节点
+</a>
+<<{/block}>>
+
+<<{block name="content"}>>
+<div class="panel panel-info">
+    <div class="panel-heading">权限节点及菜单列表</div>
+    <table id="data-list" class="cigo-data-list table table-striped table-hover">
+        <tr>
+            <th>编号/节点或菜单名称</th>
+            <th width="200">分组</th>
+            <th width="90">菜单/节点</th>
+            <th width="80">排序</th>
+            <th width="250">操作</th>
+        </tr>
+    </table>
+</div>
+<<{/block}>>
+
+<<{block name="js-footer"}>>
+<script type="text/javascript">
+    let listPlugin;
+    let pageInitFlag = false;
+    $(function () {
+        initView();
+        initEvent();
+        pageInitFlag = true;
+    });
+
+    function initView() {
+        //初始化列表插件
+        listPlugin = new CigoList({
+            listView: $('#data-list'),
+            dataSrcUrl: "<<{:url('getDataList')}>>",
+            renderItemViewFunc: createTr,
+            afterRenderFunc: function () {
+                cigoForm.render();
+            }
+        });
+        //刷新列表
+        listPlugin.renderList(true, true, false);
+    }
+
+    function refreshList() {
+        if (pageInitFlag) {
+            listPlugin.renderList(true, false, false);
+        }
+    }
+
+    function createTr(dataListView, itemSubViewList, listKey, dataItem, level, hasSubFlag, hasSubCls, itemIndex) {
+        itemSubViewList.push(
+            '<tr class="list-item" data-level="' + level + '">' +
+            '   <td>' +
+            '       ' + getTitleTab(level, '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;') +
+            '       ' + (
+                hasSubFlag
+                    ? '<i class="has-sub expand-icon cigo-iconfont cigo-icon-one" title="点击关闭"></i>'
+                    : '<i class="expand-icon cigo-iconfont cigo-icon-one" style="visibility: hidden;"></i>'
+            ) +
+            '       ' + dataItem['id'] + '&nbsp;&nbsp;' +
+            '           <i class="cigo-iconfont ' + dataItem['icon'] + '"></i>' + dataItem['title'] +
+            '   </td>' +
+            '   <td>' +
+            '       ' + (dataItem['group'] == '' ? '' : (dataItem['group'] + '&nbsp;(' + dataItem['group_sort'] + ')')) +
+            '   </td>' +
+            '   <td>' + (
+                (dataItem['menu_flag'] == '1')
+                    ? '<i class="cigo circle green"></i><span class="cigo color green">&nbsp;&nbsp;系统菜单</span>'
+                    : '<i class="cigo circle grey"></i><span class="cigo color grey">&nbsp;&nbsp;权限节点</span>'
+            ) +
+            '   </td>' +
+            '   <td>' +
+            '       <input class="form-control cigo-edit quik-edit" cigo-edit-url=\'<<{:url("editValItem")}>>\' cigo-edit-val-item-key="sort" cigo-edit-val-item-val="' + dataItem['sort'] + '" cigo-edit-id="' + dataItem['id'] + '" type="text" value="' + dataItem['sort'] + '" />' +
+            '   </td>' +
+            '   <td>' +
+            '       <a class="btn btn-default" ' +
+            '           href=\'<<{:url("add", false, false)}>>' + Think.DEEP + 'pid' + Think.DEEP + dataItem['id'] + Think.DEEP + 'ppath' + Think.DEEP + dataItem['path'] + Think.DEEP + 'ptitle' + Think.DEEP + dataItem['title'] + '\' >' +
+            '           <i class="fa fa-plus-square-o"></i>子菜单</a>&nbsp;' +
+            '       <a class="btn btn-default ajax-get confirm" ' +
+            '           href=\'<<{:url("setStatus", false, false)}>>' + Think.DEEP + 'id' + Think.DEEP + dataItem['id'] + Think.DEEP + 'status' + Think.DEEP + Math.abs(1 - dataItem['status']) + Think.DEEP + 'ctrlTip' + Think.DEEP + show_status_label(dataItem['status'], ['启用', '禁用']) + '\' >' +
+            '           ' + show_status_label(dataItem['status'], ['启用', '禁用']) + '</a>&nbsp;' +
+            '       <a class="btn btn-default editbtn" data-id="' + dataItem['id'] + '">编辑</a>&nbsp;' +
+            '       <a class="btn btn-default ajax-get confirm" href=\'<<{:url("setStatus", false, false)}>>' + Think.DEEP + 'id' + Think.DEEP + dataItem['id'] + Think.DEEP + 'status' + Think.DEEP + '-1' + Think.DEEP + 'ctrlTip' + Think.DEEP + '删除\' >删除</a>' +
+            '   </td>' +
+            '</tr>'
+        );
+    }
+
+    function initEvent() {
+        $('.addBtn').click(function () {
+            cigoLayer.open({
+                title: ['添加菜单/功能节点', 'font-size: 16px;font-weight: bold;'],
+                type: 2,
+                area: ['60%', '610px'],
+                fix: false,
+                scrollbar: false,
+                maxmin: true,
+                shade: [0.5, '#ffffff'],
+                shadeClose: false,
+                skin: 'layui-layer-rim',
+                content: "<<{:url('add', false, false)}>>",
+                offset: '10px',
+                cancel: function (index) {
+                    cigoLayer.close(index);
+                    return false;
+                }
+            });
+            return false;
+        });
+        $('#data-list').on('click', '.editbtn', function () {
+            cigoLayer.open({
+                title: ['修改菜单/功能节点', 'font-size: 16px;font-weight: bold;'],
+                type: 2,
+                area: ['60%', '610px'],
+                offset: '10px',
+                fix: false,
+                scrollbar: false,
+                maxmin: true,
+                shade: [0.5, '#ffffff'],
+                shadeClose: false,
+                skin: 'layui-layer-rim',
+                content: "<<{:url('edit', false, false)}>>" + Think.DEEP + 'id' + Think.DEEP + $(this).data('id'),
+                cancel: function (index) {
+                    cigoLayer.close(index);
+                    return false;
+                }
+            });
+            return false;
+        });
+    }
+</script>
+<<{/block}>>

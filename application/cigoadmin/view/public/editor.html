@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <<{include file="cigoadmin@include/cssHeaderTop" /}>>
+    <<{include file="cigoadmin@include/cssHeaderMiddle" /}>>
+    <<{include file="cigoadmin@include/cssHeaderBottom" /}>>
+    <link rel="stylesheet" href="__CIGO_PUBLIC__/common/css/page-content.css"/>
+    <link rel="stylesheet" href="__CIGO_PUBLIC__/cigoos/edit.css"/>
+
+    <<{include file="cigoadmin@include/jsHeaderTop" /}>>
+    <<{include file="cigoadmin@include/jsHeaderMiddle" /}>>
+    <script type="text/javascript" src="__CIGO_PUBLIC__/ueditor1_4_3_3-utf8-php/ueditor.config.js"></script>
+    <script type="text/javascript" src="__CIGO_PUBLIC__/ueditor1_4_3_3-utf8-php/ueditor.all.js"></script>
+    <script type="text/javascript" src="__CIGO_PUBLIC__/ckeditor_4.4.8_standard/ckeditor.js"></script>
+    <<{include file="cigoadmin@include/jsHeaderBottom" /}>>
+    <script type="text/javascript" src="__CIGO_PUBLIC__/common/js/page-content.js"></script>
+    <script type="text/javascript" src="__CIGO_PUBLIC__/plupload-2.1.8/js/plupload.full.min.js"></script>
+    <script type="text/javascript" src="__CIGO_PUBLIC__/Jcrop-WIP-2.x/js/Jcrop.js"></script>
+    <script type="text/javascript" src="__CIGO_PUBLIC__/Jcrop-WIP-2.x/js/jquery.color.js"></script>
+    <script type="text/javascript" src="__CIGO_PUBLIC__/cigoos/plUpload.js"></script>
+    <script type="text/javascript" src="__CIGO_PUBLIC__/cigoos/edit.js"></script>
+
+    <<{block name="head-bottom"}>><<{/block}>>
+</head>
+<body>
+<<{block name="title-tool-bar"}>>
+<div class="title_tool_bar_bg"></div>
+<div class="title_tool_bar">
+    <div class="pull-left label-title"><<{$label_title}>></div>
+    <ul id="tool-bar-tabs" class="pull-left nav nav-tabs">
+        <<{block name="tool-bar-tabs"}>><<{/block}>>
+    </ul>
+    <div class="tool-bar-btns pull-right">
+        <<{block name="tool-bar-btns"}>><<{/block}>>
+    </div>
+    <div class="clear_both"></div>
+</div>
+<<{/block}>>
+
+<<{block name="content"}>><<{/block}>>
+
+<<{include file="cigoadmin@include/jsFooter" /}>>
+
+<script type="text/javascript">
+    $(function () {
+        $('#tool-bar-tabs').on('click', '>li', function () {
+            var tabIndex = $(this).index();
+            //切换Tab
+            $('#tool-bar-tabs').find('>li.active').removeClass('active');
+            $(this).addClass('active');
+
+            //切换TabContent
+            $('#content-tabs').find('>.tab-pane.active').removeClass('active');
+            $("#content-tabs .tab-pane:eq('" + tabIndex + "')").addClass('active');
+
+            return false;
+        });
+    });
+
+    function windowResize() {
+        $(window).resize();
+    }
+</script>
+<<{block name="js-footer"}>><<{/block}>>
+</body>
+</html>

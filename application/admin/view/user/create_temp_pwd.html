@@ -1,0 +1,66 @@
+<<{extend name="cigoadmin@public:editor"/}>>
+<<{block name="head-bottom"}>>
+<style type="text/css">
+    body {
+        padding: 8px;
+    }
+</style>
+<<{/block}>>
+
+<<{block name="title-tool-bar"}>>
+
+<<{/block}>>
+
+<<{block name="content"}>>
+    <form id="form" class="layui-form" style="width: 90%;">
+        <input type="hidden" name="id" value="<<{$data['id']}>>">
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">手机号</label>
+            <div class="layui-input-block">
+                <input type="text" name="phone" value="<<{$data['phone']}>>" autocomplete="off" class="layui-input" readonly>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">备注</label>
+            <div class="layui-input-block">
+                <textarea name="remark" class="layui-textarea"></textarea>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <a class="layui-btn submitForm" href="<<{:url('createTempPwd')}>>" formId="form">
+                    <i class="fa fa-check"></i>
+                    确认获取临时登录码
+                </a>
+            </div>
+        </div>
+    </form>
+<<{/block}>>
+
+<<{block name="js-footer"}>>
+    <script type="text/javascript">
+        var currentLayerIndex;
+        $(function () {
+            currentLayerIndex = parent.cigoLayer.getFrameIndex(window.name);
+
+            $(".submitForm").click(function (evt) {
+                formPost(evt, $(this), function (data) {
+                    var content = '窗口2分钟后自动关闭，请妥善保管此临时登录码<br>此登录码将在' + data.data.temp_valid_time + '失效<br>' + data.data.temp_password;
+                    parent.cigoLayer.msg(content, {
+                        time: 120000, //2分钟后自动关闭
+                        btn: ['知道了']
+                    });
+                    parent.cigoLayer.close(currentLayerIndex);
+                }, function (data) {
+                    cigoLayer.msg(data.msg, {icon: 5});
+                });
+
+                return false;
+            });
+
+        });
+    </script>
+<<{/block}>>

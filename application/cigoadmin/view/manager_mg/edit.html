@@ -1,0 +1,207 @@
+<<{extend name="cigoadmin@public:editor"/}>>
+
+<<{block name="head-bottom"}>>
+<script type="text/javascript" src="__CIGO_PUBLIC__/cigoos/cigoList.js"></script>
+<<{/block}>>
+
+<<{block name="title-tool-bar"}>>
+<<{/block}>>
+
+<<{block name="content"}>>
+
+<form id="form">
+    <div style="padding: 20px; background-color: #F2F2F2;">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md6" style="float: left;width: 30%;">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+
+                        <div class="cigo-edit item-input"
+                             cigo-edit-type="hidden"
+                             cigo-edit-value="<<{$data['id']}>>"
+                             cigo-edit-name="id"></div>
+
+                        <div class="form-group">
+                            <div class="cigo-edit item-input"
+                                 cigo-edit-label="用户名"
+                                 cigo-edit-disabled
+                                 cigo-edit-helpblock="用于管理员后台登录..."
+                                 cigo-edit-type="text"
+                                 cigo-edit-class="form-control"
+                                 cigo-edit-style="width:260px;"
+                                 cigo-edit-value="<<{$data['username']}>>"
+                                 cigo-edit-name="username"></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="cigo-edit item-input"
+                                 cigo-edit-label="昵称"
+                                 cigo-edit-type="text"
+                                 cigo-edit-class="form-control"
+                                 cigo-edit-style="width:260px;"
+                                 cigo-edit-value="<<{$data['nickname']}>>"
+                                 cigo-edit-name="nickname"
+                                 cigo-edit-placeholder="请输入昵称..."></div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="cigo-edit item-input"
+                                 cigo-edit-label="重置密码"
+                                 cigo-edit-type="password"
+                                 cigo-edit-class="form-control"
+                                 cigo-edit-style="width:260px;"
+                                 cigo-edit-value=""
+                                 cigo-edit-name="password"
+                                 cigo-edit-helpblock="如不重置，留空即可"
+                                 cigo-edit-placeholder="请重置密码..."></div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="cigo-edit item-radio"
+                                 cigo-edit-type="landscape"
+                                 cigo-edit-name="status"
+                                 cigo-edit-data-radio-options='<<{$status_options_list}>>'
+                                 cigo-edit-value="<<{$data['status']}>>"
+                            ></div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="cigo-edit item-input"
+                                 cigo-edit-type="text"
+                                 cigo-edit-class="form-control"
+                                 cigo-edit-style="width:260px;"
+                                 cigo-edit-value="<<{$data['email']}>>"
+                                 cigo-edit-name="email"
+                                 cigo-edit-placeholder="请输入邮箱..."></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="cigo-edit item-input"
+                                 cigo-edit-label="登录失败次数"
+                                 cigo-edit-type="text"
+                                 cigo-edit-class="form-control"
+                                 cigo-edit-style="width:260px;"
+                                 cigo-edit-value="<<{$data['log_fail_num']}>>"
+                                 cigo-edit-name="log_fail_num"
+                                 cigo-edit-helpblock="超过3次，将在3min后重试..."
+                                 cigo-edit-placeholder="请修改登录失败次数..."></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md6" style="float: left;width: 70%;">
+                <div class="panel panel-success">
+                    <div class="panel-heading">权限节点</div>
+                    <div class="panel-body" style="height: 400px;overflow-y: auto;">
+                        <table id="data-list"
+                               class="layui-form cigo-data-list table table-striped table-bordered table-hover">
+                            <tr>
+                                <th>编号/权限节点</th>
+                                <th width="70">状态</th>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="panel-footer">
+                        <div class="form-group btn-group" style="clear: both;">
+                            <a class="btn btn-success btn-default editBtn" href="<<{:url('edit')}>>" formId="form">修
+                                改</a>
+                            <a class="btn btn-warning btn-default cancelBtn" href="#" onclick="history.go(-1);">取 消</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<<{/block}>>
+
+<<{block name="js-footer"}>>
+<script type="text/javascript">
+    let currPageIndex;
+    let listPlugin;
+    let pageInitFlag = false;
+    let lastSelectedAuthGroups;
+    $(function () {
+        currPageIndex = parent.cigoLayer.getFrameIndex(window.name);
+        initData();
+        initView();
+        initEvent();
+        pageInitFlag = true;
+    });
+
+    function initData() {
+        lastSelectedAuthGroups = JSON.parse('<<{$lastSelectedAuthGroups|raw}>>');
+        console.log(lastSelectedAuthGroups);
+    }
+
+    function initView() {
+        //初始化列表插件
+        listPlugin = new CigoList({
+            listView: $('#data-list'),
+            dataSrcType: CigoList.CIGO_LIST_DATA_SRC_TYPE.Function,
+            dataSrcFunc: function () {
+                return JSON.parse('<<{$auth_group_list|raw}>>');
+            },
+            renderItemViewFunc: createTr,
+            afterRenderFunc: function () {
+                cigoForm.render();
+            }
+        });
+        //刷新列表
+        listPlugin.renderList(true, true, false);
+    }
+
+    function initEvent() {
+        $('input[name="title"]').focus();
+        $("#form").keydown(function (event) {
+            if ((event.which || event.keyCode) == 13) {
+                $('.editBtn:first').trigger('click');
+                return false;
+            }
+        });
+        $(".editBtn").click(function (evt) {
+            formPost(evt, $(this), function (data) {
+                cigoLayer.msg(data.msg, {icon: 6});
+                setTimeout(function () {
+                    parent.refreshList();
+                    parent.cigoLayer.close(currPageIndex);
+                }, 1500);
+            }, function (data) {
+                cigoLayer.msg(data.msg, {icon: 5});
+            });
+
+            return false;
+        });
+        $(".cancelBtn").click(function () {
+            parent.refreshList();
+            parent.cigoLayer.close(currPageIndex);
+            return false;
+        });
+    }
+
+    function createTr(dataListView, itemSubViewList, listKey, dataItem, level, hasSubFlag, hasSubCls, itemIndex) {
+        itemSubViewList.push(
+            '<tr class="list-item" data-level="' + level + '">' +
+            '   <td>' +
+            '       ' + getTitleTab(level, '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;') +
+            '       ' + (
+                hasSubFlag
+                    ? '<i class="has-sub expand-icon cigo-iconfont cigo-icon-one" title="点击关闭"></i>'
+                    : '<i class="expand-icon cigo-iconfont cigo-icon-one" style="visibility: hidden;"></i>'
+            ) +
+            '       <input type="checkbox" name="authGroup[]" lay-skin="primary" value="' + dataItem['id'] + '" ' +
+            '           ' + (
+                (lastSelectedAuthGroups.indexOf(dataItem['id']) > -1) ? 'checked' : ''
+            ) +
+            '           />' +
+            '       ' + dataItem['id'] + '&nbsp;&nbsp;' + dataItem['title'] + '</td>' +
+            '   <td>' + (
+                (dataItem['status'] == '1')
+                    ? '<i class="cigo circle green"></i><span class="cigo color green">&nbsp;&nbsp;启用</span>'
+                    : '<i class="cigo circle grey"></i><span class="cigo color grey">&nbsp;&nbsp;禁用</span>'
+            ) +
+            '   </td>' +
+            '</tr>'
+        );
+    }
+</script>
+
+<<{/block}>>

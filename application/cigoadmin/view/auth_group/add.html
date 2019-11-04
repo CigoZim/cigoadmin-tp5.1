@@ -1,0 +1,161 @@
+<<{extend name="cigoadmin@public:editor"/}>>
+
+<<{block name="head-bottom"}>>
+<script type="text/javascript" src="__CIGO_PUBLIC__/cigoos/cigoList.js"></script>
+<<{/block}>>
+
+<<{block name="title-tool-bar"}>>
+<<{/block}>>
+
+<<{block name="content"}>>
+
+<form id="form">
+    <div style="padding: 20px; background-color: #F2F2F2;">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md6" style="float: left;width: 30%;">
+                <div class="layui-card">
+                    <div class="layui-card-header">分组基础信息</div>
+                    <div class="layui-card-body">
+
+                        <div class="form-group">
+                            <div class="cigo-edit item-select"
+                                 cigo-edit-label="父级菜单"
+                                 cigo-edit-value="<<{$pid}>>"
+                                 cigo-edit-name="pid"
+                                 cigo-edit-data-select-options='<<{$pList}>>'
+                                 cigo-edit-select-width="200"
+                                 cigo-edit-placeholder="--顶级菜单--"
+                                 cigo-edit-fun-item-change="parentChange"
+                                 cigo-edit-select-allowClear
+                                 cigo-edit-select-clearDefault></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="cigo-edit item-input"
+                                 cigo-edit-type="hidden"
+                                 cigo-edit-value="0,"
+                                 cigo-edit-name="path"></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="cigo-edit item-input"
+                                 cigo-edit-label="菜单标题"
+                                 cigo-edit-type="text"
+                                 cigo-edit-class="form-control"
+                                 cigo-edit-style="width:260px;"
+                                 cigo-edit-name="title"
+                                 cigo-edit-placeholder="请输入标题..."></div>
+                        </div>
+
+                        <div class="form-group btn-group">
+                            <a class="btn btn-success btn-default addBtn" href="<<{:url('add')}>>" formId="form">添 加</a>
+                            <a class="btn btn-warning btn-default cancelBtn" href="#">取 消</a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md6" style="float: left;width: 70%;">
+                <div class="panel panel-success">
+                    <div class="panel-heading">权限节点</div>
+                    <div class="panel-body" style="height: 470px;overflow-y: auto;">
+                        <table id="data-list"
+                               class="layui-form cigo-data-list table table-striped table-bordered table-hover">
+                            <tr>
+                                <th>编号/权限节点</th>
+                                <th width="70">状态</th>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<<{/block}>>
+
+<<{block name="js-footer"}>>
+<script type="text/javascript">
+    let currPageIndex;
+    let listPlugin;
+    $(function () {
+        currPageIndex = parent.cigoLayer.getFrameIndex(window.name);
+        initView();
+        initEvent();
+    });
+
+    function initView() {
+        //初始化列表插件
+        listPlugin = new CigoList({
+            listView: $('#data-list'),
+            dataSrcType: CigoList.CIGO_LIST_DATA_SRC_TYPE.Function,
+            dataSrcFunc: function () {
+                return JSON.parse('<<{$auth_rule_list|raw}>>');
+            },
+            renderItemViewFunc: createTr,
+            afterRenderFunc: function () {
+                cigoForm.render();
+            }
+        });
+        //刷新列表
+        listPlugin.renderList(true, true, false);
+    }
+
+    function initEvent() {
+        $('input[name="title"]').focus();
+        $("#form").keydown(function (event) {
+            if ((event.which || event.keyCode) == 13) {
+                $('.addBtn:first').trigger('click');
+                return false;
+            }
+        });
+
+        $(".addBtn").click(function (evt) {
+            formPost(evt, $(this), function (data) {
+                cigoLayer.msg(data.msg, {icon: 6});
+                setTimeout(function () {
+                    parent.refreshList();
+                    parent.cigoLayer.close(currPageIndex);
+                }, 1500);
+            }, function (data) {
+                cigoLayer.msg(data.msg, {icon: 5});
+            });
+
+            return false;
+        });
+        $(".cancelBtn").click(function () {
+            parent.refreshList();
+            parent.cigoLayer.close(currPageIndex);
+            return false;
+        });
+    }
+
+    function parentChange(optionItemData) {
+        let parentId = (optionItemData.length > 0) ? optionItemData[0].id : 0;
+        let parentPath = (optionItemData.length > 0) ? optionItemData[0].path : '';
+        $('input[name="pid"]:first').val(parentId);
+        $('input[name="path"]:first').val(parentPath + parentId + ',');
+    }
+
+    function createTr(dataListView, itemSubViewList, listKey, dataItem, level, hasSubFlag, hasSubCls, itemIndex) {
+        itemSubViewList.push(
+            '<tr class="list-item" data-level="' + level + '">' +
+            '   <td>' +
+            '       ' + getTitleTab(level, '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;') +
+            '       ' + (
+                hasSubFlag
+                    ? '<i class="has-sub expand-icon cigo-iconfont cigo-icon-one" title="点击关闭"></i>'
+                    : '<i class="expand-icon cigo-iconfont cigo-icon-one" style="visibility: hidden;"></i>'
+            ) +
+            '       <input type="checkbox" name="authRules[]" lay-skin="primary" value="' + dataItem['id'] + '" />' +
+            '       ' + dataItem['id'] + '&nbsp;&nbsp;' + dataItem['title'] + '</td>' +
+            '   <td>' + (
+                (dataItem['status'] == '1')
+                    ? '<i class="cigo circle green"></i><span class="cigo color green">&nbsp;&nbsp;启用</span>'
+                    : '<i class="cigo circle grey"></i><span class="cigo color grey">&nbsp;&nbsp;禁用</span>'
+            ) +
+            '   </td>' +
+            '</tr>'
+        );
+    }
+</script>
+
+<<{/block}>>

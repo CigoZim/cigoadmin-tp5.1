@@ -1,0 +1,155 @@
+<<{extend name="cigoadmin@public:editor" /}>>
+<<{block name="head-bottom"}>>
+<script type="text/javascript" src="__CIGO_PUBLIC__/cigoos/cigoList.js"></script>
+<<{/block}>>
+
+<<{block name="tool-bar-btns"}>>
+<a class="btn btn-primary addBtn">
+    <i class="fa fa-plus-square"></i>
+    添加数据
+</a>
+<<{/block}>>
+
+<<{block name="content"}>>
+<div class="input-group" style="width: 100%;min-width: 400px;">
+    <span class="input-group-addon">检索:</span>
+    <input class="form-control" placeholder="请输入检索词..." type="text" name="keyword" value="<<{$args['keyword']}>>"/>
+</div>
+<br/>
+<div class="show-page"></div>
+<table id="data-list" class="cigo-data-list layui-table"
+       url="<<{:url('getDataList')}>>">
+    <thead class="list-head">
+    <tr>
+        <th>编号</th>
+        <th>标题</th>
+        <th>创建日期</th>
+        <th width="7%">排序</th>
+        <th>数据操作</th>
+    </tr>
+    </thead>
+</table>
+<div class="show-page"></div>
+<<{/block}>>
+
+<<{block name="js-footer"}>>
+<script type="text/javascript">
+    var listPlugin;
+    var pageInitFlag = false;
+    $(function () {
+        initView();
+        initEvent();
+        pageInitFlag = true;
+    });
+
+    function initView() {
+        //初始化列表插件
+        listPlugin = new CigoList({
+            listView: $('#data-list'),
+            dataSrcUrl: "<<{:url('getDataList')}>>",
+            pageContainerCls: 'show-page',
+            //1. 模拟回调函数第一种匿名函数写法
+            argsFunc: function () {
+                var keyword = $('input[name="keyword"]:first').val();
+                return {
+                    'keyword': keyword
+                };
+            },
+            //2. 模拟配置项回调函数第二种函数名写法
+            renderItemViewFunc: createTr,
+        });
+        //刷新列表
+        listPlugin.renderList(true, true, false);
+    }
+
+    function refreshList() {
+        if (pageInitFlag) {
+            listPlugin.renderList(true, false, false);
+        }
+    }
+
+    function createTr(dataListView, itemSubViewList, listKey, dataItem, level, hasSubFlag, hasSubCls) {
+        itemSubViewList.push(
+            '<tr class="list-item">' +
+            '   <td>' +
+            '       ' + dataItem['id'] +
+            '   </td>' +
+            '   <td>' +
+            '       ' + dataItem['title'] +
+            '   </td>' +
+            '   <td>' +
+            '       ' + dataItem['create_time'] +
+            '   </td>' +
+            '   <td>' +
+            '       <input class="form-control cigo-edit quik-edit" cigo-edit-url=\'<<{:url("editValItem")}>>\' cigo-edit-val-item-key="sort" cigo-edit-val-item-val="' + dataItem['sort'] + '" cigo-edit-id="' + dataItem['id'] + '" type="text" value="' + dataItem['sort'] + '" />' +
+            '   </td>' +
+            '   <td>' +
+            getStatusBtn(dataItem['id'], dataItem['status']) +
+            '       <button class="btn btn-info btn-sm editbtn" href="#" data-id="' + dataItem['id'] + '">编辑</button>&nbsp;' +
+            '       <button class="btn btn-sm ajax-get confirm" href=\'<<{:url("setStatus", false, false)}>>' + Think.DEEP + 'id' + Think.DEEP + dataItem['id'] + Think.DEEP + 'status' + Think.DEEP + '-1' + Think.DEEP + 'ctrlTip' + Think.DEEP + '删除\' style="background-color: #999">删除</button>' +
+            '   </td>' +
+            '</tr>'
+        );
+    }
+
+    function initEvent() {
+        $('#searchPanel').click(function (e) {
+            e.stopPropagation();
+        });
+        $('input[name="keyword"]:first').keydown(function (event) {
+            if ((event.which || event.keyCode) === 13) {
+                refreshList();
+            }
+        });
+        $('.addBtn').click(function () {
+            cigoLayer.open({
+                title: ['添加文案', 'font-size: 16px;font-weight: bold;'],
+                type: 2,
+                area: ['70%', '90%'],
+                fix: false,
+                scrollbar: false,
+                maxmin: true,
+                shade: [0.5, '#ffffff'],
+                shadeClose: false,
+                skin: 'layui-layer-rim',
+                content: "<<{:url('add', false, false)}>>"
+            });
+            return false;
+        });
+        $('#data-list').on('click', '.editbtn', function () {
+            cigoLayer.open({
+                title: ['修改文案', 'font-size: 16px;font-weight: bold;'],
+                type: 2,
+                area: ['70%', '90%'],
+                fix: false,
+                scrollbar: false,
+                maxmin: true,
+                shade: [0.5, '#ffffff'],
+                shadeClose: false,
+                skin: 'layui-layer-rim',
+                content: "<<{:url('edit', false, false)}>>" + Think.DEEP + 'id' + Think.DEEP + $(this).data('id')
+            });
+            return false;
+        });
+    }
+
+    function getStatusBtn(id, status) {
+        var btnCls = 'btn-success btn-sm';
+        switch (status) {
+            case 0:
+                btnCls = 'btn-success btn-sm';
+                break;
+            case 1:
+                btnCls = 'btn-danger btn-sm';
+        }
+
+        return '' +
+            '<button class="btn '+btnCls+' ajax-get" href=\'<<{:url("setStatus", false, false)}>>' +
+            Think.DEEP + 'id' + Think.DEEP + id + Think.DEEP + 'status' + Think.DEEP + Math.abs(1 - status) +
+            Think.DEEP + 'ctrlTip' + Think.DEEP + show_status_label(status, ['启用', '禁用']) + '\'' +
+            '>' + show_status_label(status, ['启用', '禁用']) +
+            '</button>&nbsp;'
+    }
+
+</script>
+<<{/block}>>

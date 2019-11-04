@@ -1,0 +1,234 @@
+<<{extend name="cigoadmin@public:editor"/}>>
+
+<<{block name="head-bottom"}>>
+<style type="text/css">
+    .layui-form-switch {
+        height: 28px;
+        line-height: 28px;
+    }
+
+    .layui-form-switch i {
+        top: 5px;
+    }
+</style>
+<<{/block}>>
+<<{block name="title-tool-bar"}>>
+
+<<{/block}>>
+
+<<{block name="content"}>>
+<form id="form">
+    <div style="padding: 20px; background-color: #F2F2F2;">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md6" style="float: left;width: 50%;">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <div class="form-group">
+                            <div class="cigo-edit item-input"
+                                 cigo-edit-label="姓名"
+                                 cigo-edit-type="text"
+                                 cigo-edit-class="form-control"
+                                 cigo-edit-style="width:260px;"
+                                 cigo-edit-name="nickname"
+                                 cigo-edit-value="<<{$userInfo.nickname}>>"
+                                 cigo-edit-placeholder=""
+                                 cigo-edit-readonly="readonly"></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="cigo-edit item-input"
+                                 cigo-edit-label="客户编码"
+                                 cigo-edit-type="text"
+                                 cigo-edit-class="form-control"
+                                 cigo-edit-style="width:260px;"
+                                 cigo-edit-name="invite_code"
+                                 cigo-edit-value="<<{$userInfo.invite_code}>>"
+                                 cigo-edit-placeholder=""
+                                 cigo-edit-readonly="readonly"></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="cigo-edit item-input"
+                                 cigo-edit-label="手机号"
+                                 cigo-edit-type="text"
+                                 cigo-edit-class="form-control"
+                                 cigo-edit-style="width:260px;"
+                                 cigo-edit-name="phone"
+                                 cigo-edit-value="<<{$userInfo.phone}>>"
+                                 cigo-edit-placeholder=""
+                                 cigo-edit-readonly="readonly"></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="cigo-edit item-input"
+                                 cigo-edit-label="身份证号"
+                                 cigo-edit-type="text"
+                                 cigo-edit-class="form-control"
+                                 cigo-edit-style="width:260px;"
+                                 cigo-edit-name="card_id"
+                                 cigo-edit-value="<<{$userInfo.card_id}>>"
+                                 cigo-edit-placeholder=""
+                                 cigo-edit-readonly="readonly"></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="cigo-edit item-input"
+                                 cigo-edit-label="微信号"
+                                 cigo-edit-type="text"
+                                 cigo-edit-class="form-control"
+                                 cigo-edit-style="width:260px;"
+                                 cigo-edit-name="weixin"
+                                 cigo-edit-value="<<{$userInfo.weixin}>>"
+                                 cigo-edit-placeholder=""
+                                 cigo-edit-readonly="readonly"></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="cigo-edit item-input"
+                                 cigo-edit-label="推荐人手机号"
+                                 cigo-edit-type="text"
+                                 cigo-edit-class="form-control"
+                                 cigo-edit-style="width:260px;"
+                                 cigo-edit-name="parent_phone"
+                                 cigo-edit-value="<<{$userInfo.parent_phone ? $userInfo.parent_phone : ''}>>"
+                                 cigo-edit-placeholder=""
+                                 cigo-edit-readonly="readonly"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-col-md6" style="float: left;width: 50%;">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <div class="form-group">
+                            <div class="cigo-edit item-input"
+                                 cigo-edit-label="推荐人姓名"
+                                 cigo-edit-type="text"
+                                 cigo-edit-class="form-control"
+                                 cigo-edit-style="width:260px;"
+                                 cigo-edit-name="parent_nickname"
+                                 cigo-edit-value="<<{$userInfo.parent_nickname ? $userInfo.parent_nickname : ''}>>"
+                                 cigo-edit-placeholder=""
+                                 cigo-edit-readonly="readonly"></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="cigo-edit item-input"
+                                 cigo-edit-label="推荐人身份证号"
+                                 cigo-edit-type="text"
+                                 cigo-edit-class="form-control"
+                                 cigo-edit-style="width:260px;"
+                                 cigo-edit-name="parent_card_id"
+                                 cigo-edit-value="<<{$userInfo.parent_card_id ? $userInfo.parent_card_id : ''}>>"
+                                 cigo-edit-placeholder=""
+                                 cigo-edit-readonly="readonly"></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="cigo-edit item-input"
+                                 cigo-edit-label="手机号归属地"
+                                 cigo-edit-type="text"
+                                 cigo-edit-class="form-control"
+                                 cigo-edit-style="width:260px;"
+                                 cigo-edit-name="vest"
+                                 cigo-edit-placeholder=""
+                                 cigo-edit-value="<<{$userInfo['phone_province'].$userInfo['phone_city']}>>"
+                                 cigo-edit-readonly="readonly"></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="cigo-edit item-input"
+                                 cigo-edit-label="归属地邮编"
+                                 cigo-edit-type="text"
+                                 cigo-edit-class="form-control"
+                                 cigo-edit-style="width:260px;"
+                                 cigo-edit-name="phone_zip"
+                                 cigo-edit-placeholder=""
+                                 cigo-edit-value="<<{$userInfo['phone_zip']}>>"
+                                 cigo-edit-readonly="readonly"></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="cigo-edit item-input"
+                                 cigo-edit-label="手机号运营商"
+                                 cigo-edit-type="text"
+                                 cigo-edit-class="form-control"
+                                 cigo-edit-style="width:260px;"
+                                 cigo-edit-name="phone_company"
+                                 cigo-edit-placeholder=""
+                                 cigo-edit-value="<<{$userInfo['phone_company']}>>"
+                                 cigo-edit-readonly="readonly"></div>
+                        </div>
+                        <div class="layui-form layui-form-item">
+                            <label class="layui-form-label" style="font-weight: 700;">状态</label>
+                            <div class="layui-input-block">
+                                <<{if ($userInfo['status'] == 1)}>>
+                                <input type="checkbox"
+                                       checked=""
+                                       name="status"
+                                       lay-skin="switch"
+                                       lay-filter="switchTest"
+                                       lay-text="已启用|未启用"
+                                       disabled="disabled"/>
+                                <<{else /}>>
+                                <input type="checkbox"
+                                       name="status"
+                                       lay-skin="switch"
+                                       lay-filter="switchTest"
+                                       lay-text="已启用|未启用"
+                                       disabled="disabled"/>
+                                <<{/if}>>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md6" style="float: left;width: 100%;">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <div class="layui-form-item gray-bg">
+                            <div class="treatment-particulars">
+                                <table class="layui-table layui-table-center Treatment-table" lay-size="sm" id="courseTab">
+                                    <colgroup>
+                                        <col>
+                                        <col>
+                                        <col>
+                                        <col>
+                                        <col>
+                                        <col>
+                                        <col>
+                                        <col>
+                                        <col>
+                                        <!--<col>-->
+                                    </colgroup>
+                                    <thead>
+                                    <tr>
+                                        <th>序号</th>
+                                        <th>收件人</th>
+                                        <th>手机号</th>
+                                        <th>省</th>
+                                        <th>市</th>
+                                        <th>区</th>
+                                        <th>详细地址</th>
+                                        <th>邮编</th>
+                                        <!--<th>是否默认地址</th>-->
+                                    </tr>
+                                    </thead>
+                                    <if condition="!empty($cate)">
+                                        <?php $num = 1;?>
+                                        <<{volist name="cate" id="vo"}>>
+                                        <tr>
+                                            <td><<{$num}>></td>
+                                            <td><<{$vo['consignee']}>></td>
+                                            <td><<{$vo['phone']}>></td>
+                                            <td><<{$vo['province']}>></td>
+                                            <td><<{$vo['city']}>></td>
+                                            <td><<{$vo['district']}>></td>
+                                            <td><<{$vo['address']}>></td>
+                                            <td><<{$vo['zip_code']}>></td>
+                                        </tr>
+                                        <?php $num ++;?>
+                                        <<{/volist}>>
+                                    </if>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<<{/block}>>

@@ -1,0 +1,164 @@
+<<{extend name="cigoadmin@public:editor"/}>>
+
+<<{block name="head-bottom"}>>
+    <style type="text/css">
+        body {
+            padding: 8px;
+        }
+    </style>
+<<{/block}>>
+
+<<{block name="content"}>>
+<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+    <ul class="layui-tab-title">
+        <li class="layui-this">用户协议</li>
+        <li>关于公司</li>
+        <li>使用手册</li>
+        <li>服务条款</li>
+    </ul>
+    <div class="layui-tab-content">
+        <div class="layui-tab-item layui-show">
+            <form id="form1" class="layui-form">
+                <input type="hidden" name="id" value="1">
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">标题</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="title" value="<<{$data['agreement']['title']}>>" placeholder="" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">简介</label>
+                    <div class="layui-input-block">
+                        <textarea name="summary" placeholder="请输入内容" class="layui-textarea"><<{$data['agreement']['summary']}>></textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">详情</label>
+                    <div class="layui-input-block">
+                        <div class="cigo-edit item-editor-ueditor" cigo-edit-label="详情" cigo-edit-style="width:100%;"
+                             cigo-edit-helpblock="详情编辑--百度编辑器" cigo-edit-name="detail" cigo-edit-value="<<{$data['agreement']['detail']}>>"></div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button type="button" class="layui-btn submitForm" href="<<{:url('fixDoc')}>>" formId="form1">保存修改</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="layui-tab-item">
+            <form id="form2" class="layui-form">
+                <input type="hidden" name="id" value="2">
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">标题</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="title" value="<<{$data['about']['title']}>>" placeholder="" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">简介</label>
+                    <div class="layui-input-block">
+                        <textarea name="summary" placeholder="请输入内容" class="layui-textarea"><<{$data['about']['summary']}>></textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">详情</label>
+                    <div class="layui-input-block">
+                        <div class="cigo-edit item-editor-ueditor" cigo-edit-label="详情" cigo-edit-style="width:100%;"
+                             cigo-edit-helpblock="详情编辑--百度编辑器" cigo-edit-name="detail" cigo-edit-value="<<{$data['about']['detail']}>>"></div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button type="button" class="layui-btn submitForm" href="<<{:url('fixDoc')}>>" formId="form2">保存修改</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="layui-tab-item">
+            <form id="form3" class="layui-form">
+                <input type="hidden" name="id" value="3">
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">标题</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="title" value="<<{$data['book']['title']}>>" placeholder="" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">简介</label>
+                    <div class="layui-input-block">
+                        <textarea name="summary" placeholder="请输入内容" class="layui-textarea"><<{$data['book']['summary']}>></textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">详情</label>
+                    <div class="layui-input-block">
+                        <div class="cigo-edit item-editor-ueditor" cigo-edit-label="详情" cigo-edit-style="width:100%;"
+                             cigo-edit-helpblock="详情编辑--百度编辑器" cigo-edit-name="detail" cigo-edit-value="<<{$data['book']['detail']}>>"></div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button type="button" class="layui-btn submitForm" href="<<{:url('fixDoc')}>>" formId="form3">保存修改</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="layui-tab-item">
+            <form id="form4" class="layui-form">
+                <input type="hidden" name="id" value="4">
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">标题</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="title" value="<<{$data['term']['title']}>>" placeholder="" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">简介</label>
+                    <div class="layui-input-block">
+                        <textarea name="summary" placeholder="请输入内容" class="layui-textarea"><<{$data['term']['summary']}>></textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">详情</label>
+                    <div class="layui-input-block">
+                        <div class="cigo-edit item-editor-ueditor" cigo-edit-label="详情"
+                             cigo-edit-style="width:100%;"
+                             cigo-edit-helpblock="详情编辑--百度编辑器"
+                             cigo-edit-name="detail"
+                             cigo-edit-value="<<{$data['term']['detail']}>>"></div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button type="button" class="layui-btn submitForm" href="<<{:url('fixDoc')}>>" formId="form4">保存修改</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<<{/block}>>
+
+<<{block name="js-footer"}>>
+    <script type="text/javascript">
+        $(function () {
+            $('.submitForm').click(function (evt) {
+                formPost(evt, $(this), function (res) {
+                    if(res.code == 1){
+                        cigoLayer.msg(res.msg,{icon: 6});
+                    }else{
+                        cigoLayer.msg(res.msg,{icon: 5})
+                    }
+                }, function (res) {
+                    cigoLayer.msg(res.msg, {icon: 5});
+                });
+                return false;
+            });
+        })
+    </script>
+<<{/block}>>

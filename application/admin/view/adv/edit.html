@@ -1,0 +1,210 @@
+<<{extend name="cigoadmin@public:editor"/}>>
+
+<<{block name="head-bottom"}>>
+<style type="text/css">
+    body {
+        padding: 8px;
+    }
+</style>
+<<{/block}>>
+
+<<{block name="title-tool-bar"}>><<{/block}>>
+
+<<{block name="content"}>>
+<form id="form" class="layui-form">
+    <input type="hidden" name="id" value="<<{$data['id']}>>">
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">选择位置</label>
+        <div class="layui-input-block">
+            <select name="position" lay-filter="position" id="position">
+                <option value="">请选择位置</option>
+                <option value="1" data-size='{"cropWidth":690, "cropHeight": 300}'
+                <<{if $data['position'] == 1}>>selected<<{/if}>> >首页顶部轮播 (690 * 300)</option>
+                <option value="2" data-size='{"cropWidth":800, "cropHeight": 400}'
+                <<{if $data['position'] == 2}>>selected<<{/if}>> >首页滚动消息 (800 * 400)</option>
+                <option value="3" data-size='{"cropWidth":500, "cropHeight": 300}'
+                <<{if $data['position'] == 3}>>selected<<{/if}>>>说说顶部轮播 (500 * 300)</option>
+                <option value="4" data-size='{"cropWidth":500, "cropHeight": 300}'
+                <<{if $data['position'] == 4}>>selected<<{/if}>>>思TV顶部轮播 (500 * 300)</option>
+                <option value="5" data-size='{"cropWidth":500, "cropHeight": 300}'
+                <<{if $data['position'] == 5}>>selected<<{/if}>>>好文顶部轮播 (500 * 300)</option>
+                <option value="6" data-size='{"cropWidth":800, "cropHeight": 300}'
+                <<{if $data['position'] == 6}>>selected<<{/if}>>>砍价顶部轮播 (800 * 300)</option>
+                <option value="7" data-size='{"cropWidth":800, "cropHeight": 300}'
+                <<{if $data['position'] == 7}>>selected<<{/if}>>>拼团顶部轮播 (800 * 300)</option>
+                <option value="8" data-size='{"cropWidth":800, "cropHeight": 300}'
+                <<{if $data['position'] == 8}>>selected<<{/if}>>>积分商品顶部轮播 (800 * 300)</option>
+            </select>
+        </div>
+    </div>
+    <div id="banner"></div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">标题</label>
+        <div class="layui-input-block">
+            <input type="text" name="title" value="<<{$data['title']}>>" placeholder="" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">目标数据类型</label>
+        <div class="layui-input-block">
+            <input type="radio" name="target_type" value="0" lay-filter="targetType" title="单纯文案" <<{if
+            $data['target_type'] == 0}>>checked<<{/if}>>>
+            <input type="radio" name="target_type" value="1" lay-filter="targetType" title="外部web链接" <<{if
+            $data['target_type'] == 1}>>checked<<{/if}>>>
+            <input type="radio" name="target_type" value="2" lay-filter="targetType" title="app内部页面" <<{if
+            $data['target_type'] == 2}>>checked<<{/if}>>>
+        </div>
+    </div>
+    <div class="layui-form-item" id="dataPage">
+        <label class="layui-form-label">跳转附属信息</label>
+        <div class="layui-input-block" style="width: 30%">
+            <input type="text" name="jump_other_info" id="jump_other_info" value="<<{$data['jump_other_info']}>>"
+                   placeholder="" class="layui-input">
+        </div>
+    </div>
+
+    <!--    <div class="layui-form-item">-->
+    <!--        <label class="layui-form-label">图片</label>-->
+    <!--        <div class="layui-input-block">-->
+    <!--            <div class="cigo-edit item-img-single"-->
+    <!--                 cigo-edit-label=""-->
+    <!--                 cigo-edit-name="img"-->
+    <!--                 cigo-edit-value="<<{$data['img']}>>"-->
+    <!--                 cigo-edit-img-src="<<{$data['img-src']}>>"></div>-->
+    <!--        </div>-->
+    <!--    </div>-->
+    <div class="layui-form-item">
+        <label class="layui-form-label">展示时间</label>
+        <div class="layui-input-inline">
+            <input type="text" id="start_time" value="<<{$data['start_time']}>>" name="start_time" class="layui-input"
+                   placeholder="开始时间" readonly>
+        </div>
+        <div class="layui-form-mid">~</div>
+        <div class="layui-input-inline">
+            <input type="text" id="end_time" name="end_time" value="<<{$data['end_time']}>>" class="layui-input"
+                   placeholder="结束时间" readonly>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">展示方式</label>
+        <div class="layui-input-block">
+            <input type="radio" name="show_type" value="1" title="普通" <<{if $data['show_type'] == 1}>>checked<<{/if}>>>
+            <input type="radio" name="show_type" value="2" title="显示视频图标" <<{if $data['show_type'] ==
+            2}>>checked<<{/if}>>>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">排序</label>
+        <div class="layui-input-inline">
+            <input type="text" name="sort" value="<<{$data['sort']}>>" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">状态</label>
+        <div class="layui-input-inline">
+            <input type="radio" name="status" value="1" title="展示" <<{if $data['status'] == 1}>>checked<<{/if}>> >
+            <input type="radio" name="status" value="0" title="不展示" <<{if $data['status'] == 0}>>checked<<{/if}>>>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button type="button" class="layui-btn submitForm" href="<<{:url('edit')}>>" formId="form">立即提交</button>
+        </div>
+    </div>
+</form>
+<<{/block}>>
+
+<<{block name="js-footer"}>>
+<script type="text/javascript">
+    var currentLayerIndex;
+    $(function () {
+        currentLayerIndex = parent.cigoLayer.getFrameIndex(window.name);
+        cigoDate.render({
+            elem: '#start_time'
+            , type: 'datetime'
+        });
+        cigoDate.render({
+            elem: '#end_time'
+            , type: 'datetime'
+        });
+
+        initEvent();
+
+        $('.submitForm').click(function (evt) {
+            formPost(evt, $(this), function (res) {
+                if (res.code == 1) {
+                    cigoLayer.msg(res.msg, {icon: 6});
+                    setTimeout(function () {
+                        parent.refreshList(false);
+                        parent.cigoLayer.close(currentLayerIndex);
+                    }, 1000);
+                } else {
+                    cigoLayer.msg(res.msg, {icon: 5})
+                }
+            }, function (res) {
+                cigoLayer.msg(res.msg, {icon: 5});
+            });
+            return false;
+        });
+    });
+
+    function editEvent() {
+        let size = $("#position").find("option:selected").data("size");
+        size = JSON.stringify(size);
+        if (size) {
+            createThumbConfigView(size);
+            cigoEditInit($('#form'));
+        }
+    }
+
+
+    function initEvent() {
+        editEvent();
+        cigoForm.on('select(position)', function (data) {
+            let value = $("#position").find("option:selected").val();
+            let size = data.elem[data.elem.selectedIndex].dataset.size;
+            if (value == "<<{$data['position']}>>") {
+                editEvent();
+            } else {
+                if (size) {
+                    createThumbConfigView(size);
+                    cigoEditInit($('#form'));
+                } else {
+                    $('#banner').empty();
+                }
+            }
+
+        });
+
+        //监控选择
+        cigoForm.on('radio(targetType)', function (data) {
+            var value = data.value;
+            if (value == 5) {
+                $('#appPage').show();
+                $('#dataPage').hide();
+            } else {
+                $('#dataPage').show();
+                $('#appPage').hide();
+            }
+        });
+        cigoForm.on('select(jump_other_info_item_filter)', function (data) {
+            $("#jump_other_info").val(data.value);
+        });
+    }
+
+    function createThumbConfigView(size) {
+        $('#banner').empty();
+        $('#banner').append(
+            '       <div class="layui-form-item cigo-edit item-img-single" style="width: 50%;padding-left: 25px" ' +
+            '       cigo-edit-label="图片" cigo-edit-img-args-type="manual-tools-crop-common" ' +
+            '       cigo-edit-name="img" cigo-edit-img-ctrltype-crop=""' +
+            '       cigo-edit-value="<<{$data[\'img\']}>>"' +
+            '       cigo-edit-img-src="<<{$data[\'img-src\']}>>"' +
+            '       cigo-edit-img-crop-config=\'' + size + '\'' +
+            '       cigo-edit-placeholder="请输入宽度..."></div>'
+        );
+    }
+</script>
+<<{/block}>>

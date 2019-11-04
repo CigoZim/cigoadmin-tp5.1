@@ -1,0 +1,178 @@
+<<{extend name="cigoadmin@public:editor" /}>>
+<<{block name="head-bottom"}>>
+<script type="text/javascript" src="__CIGO_PUBLIC__/cigoos/cigoList.js"></script>
+<<{/block}>>
+
+<<{block name="tool-bar-btns"}>>
+<<{/block}>>
+
+<<{block name="content"}>>
+<div class="input-group" style="width: 100%;min-width: 400px;">
+    <span class="input-group-addon">检索:</span>
+    <input class="form-control" placeholder="请输入检索词..." type="text" name="keyword" value="<<{$args['keyword']}>>"/>
+    <div class="input-group-btn">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false">
+            更多检索条件
+        </button>
+        <div id="searchPanel" class="dropdown-menu dropdown-menu-right" style="width: 680px;padding: 10px;">
+            <div class="panel panel-success" style="margin: 0px;">
+                <div class="panel-heading">选择检索条件</div>
+                <div class="panel-body">
+                    <div class="form-group pull-left">
+                        <div class="cigo-edit item-datetimepicker label_landscape"
+                             cigo-edit-label="创建日期"
+                             cigo-edit-datetime-format="yyyy-mm-dd"
+                             cigo-edit-class="form-control"
+                             cigo-edit-style="width: 260px;"
+                             cigo-edit-name="startDate"
+                             cigo-edit-value="<<{$args['startDate']}>>"
+                             cigo-edit-change-date-func="refreshList"
+                             cigo-edit-readonly="readonly"
+                             cigo-edit-datetime-minview="month"
+                             cigo-edit-placeholder="请选择起始日期..."></div>
+                    </div>
+
+                    <div class="form-group pull-left">
+                        <div class="cigo-edit item-datetimepicker label_landscape"
+                             cigo-edit-label="~"
+                             cigo-edit-datetime-format="yyyy-mm-dd"
+                             cigo-edit-class="form-control"
+                             cigo-edit-style="width: 260px;"
+                             cigo-edit-name="endDate"
+                             cigo-edit-value="<<{$args['endDate']}>>"
+                             cigo-edit-change-date-func="refreshList"
+                             cigo-edit-readonly="readonly"
+                             cigo-edit-datetime-minview="month"
+                             cigo-edit-placeholder="请选择结束日期..."></div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br/>
+<div class="show-page"></div>
+<table id="data-list" class="cigo-data-list layui-table">
+    <thead class="list-head">
+    <tr>
+        <th>数据编号</th>
+        <th>数据类型</th>
+        <th>数据模块</th>
+        <th>数据名称</th>
+        <th>删除日期</th>
+        <th>数据操作</th>
+    </tr>
+    </thead>
+</table>
+<div class="show-page"></div>
+<<{/block}>>
+
+<<{block name="js-footer"}>>
+<script type="text/javascript">
+    let listPlugin;
+    let pageInitFlag = false;
+    $(function () {
+        initView();
+        initEvent();
+        pageInitFlag = true;
+    });
+
+    function initView() {
+        //初始化列表插件
+        listPlugin = new CigoList({
+            listView: $('#data-list'),
+            dataSrcUrl: "<<{:url('getDataList')}>>",
+            pageContainerCls: 'show-page',
+            //1. 模拟回调函数第一种匿名函数写法
+            argsFunc: function () {
+                let keyword = $('input[name="keyword"]:first').val();
+                let startDate = $('input[name="startDate"]:first').val();
+                let endDate = $('input[name="endDate"]:first').val();
+                return {
+                    'keyword': keyword,
+                    'startDate': startDate,
+                    'endDate': endDate,
+                };
+            },
+            //2. 模拟配置项回调函数第二种函数名写法
+            renderItemViewFunc: createTr,
+        });
+        //刷新列表
+        listPlugin.renderList(true, true, false);
+    }
+
+    function refreshList() {
+        if (pageInitFlag) {
+            listPlugin.renderList(true, false, false);
+        }
+    }
+
+    function createTr(listContainer, itemViewList, itemKey, dataItem, level, hasSubFlag, hasSubCls) {
+        itemViewList.push(
+            '<tr class="list-item">' +
+            '   <td>' +
+            '       ' + dataItem['data_id'] +
+            '   </td>' +
+            '   <td>' +
+            '       ' + dataItem['type_tip'] +
+            '   </td>' +
+            '   <td>' +
+            '       ' + dataItem['module_tip'] +
+            '   </td>' +
+            '   <td>' +
+            '       ' + dataItem['title'] +
+            '   </td>' +
+            '   <td>' +
+            '       ' + dataItem['create_time'] +
+            '   </td>' +
+            '   <td>' +
+            '       <a class="btn btn-success ajax-get confirm" href=\'<<{:url("revertData", false, false)}>>' +
+            Think.DEEP + 'dataId' + Think.DEEP + dataItem['data_id'] +
+            Think.DEEP + 'module' + Think.DEEP + dataItem['module'] + '\'' +
+            '       >恢复数据</a>&nbsp;' +
+            '       <a class="btn btn-info editbtn" href="#" data-edit_url="' + dataItem['edit_url'] + '" data-type_tip="' + dataItem['type_tip'] + '"' +
+            '       >编辑</a>&nbsp;' +
+            '       <a class="btn btn-danger ajax-get confirm" href=\'<<{:url("removeData", false, false)}>>' +
+            Think.DEEP + 'dataId' + Think.DEEP + dataItem['data_id'] +
+            Think.DEEP + 'module' + Think.DEEP + dataItem['module'] + '\'' +
+            '       >删除数据</a>&nbsp;' +
+            '   </td>' +
+            '</tr>'
+        )
+        ;
+    }
+
+    function initEvent() {
+        $('#searchPanel').click(function (e) {
+            e.stopPropagation();
+        });
+        $('input[name="keyword"]:first').keydown(function (event) {
+            if ((event.which || event.keyCode) === 13) {
+                refreshList();
+            }
+        });
+        $('#data-list').on('click', '.editbtn', function () {
+            cigoLayer.open({
+                title: [$(this).data('type_tip') + ':数据修改', 'font-size: 16px;font-weight: bold;'],
+                type: 2,
+                area: ['750px', '460px'],
+                fix: false,
+                scrollbar: false,
+                maxmin: true,
+                shade: [0.5, '#ffffff'],
+                shadeClose: false,
+                skin: 'layui-layer-rim',
+                content: $(this).data('edit_url'),
+                cancel: function (index) {
+                    cigoLayer.close(index);
+                    return false;
+                }
+            });
+            return false;
+        });
+    }
+</script>
+<<{/block}>>

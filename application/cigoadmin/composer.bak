@@ -1,0 +1,35 @@
+//thinkphp
+composer create-project topthink/think tp v5.1.37
+
+//图像处理
+composer  require topthink/think-image v1.0.7
+
+//验证码
+composer  require topthink/think-captcha v2.0.2
+
+//网络请求
+composer  require yurunsoft/yurun-http v3.2.0
+
+//二维码
+composer  require endroid/qr-code v3.6.1
+
+//php-office
+composer  require phpoffice/phpspreadsheet v1.8.2
+
+//overtrue/wechat
+composer  require overtrue/wechat v4.1.31
+
+//easypay yansongda/pay
+composer  require yansongda/pay v2.8.3
+
+
+
+
+
+
+
+//swoole
+composer  require topthink/think-swoole v2.0.17
+
+//php-jwt-token
+composer  require firebase/php-jwt

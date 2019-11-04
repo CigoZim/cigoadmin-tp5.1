@@ -1,0 +1,105 @@
+<<{extend name="cigoadmin@public:editor"/}>>
+
+<<{block name="head-bottom"}>>
+    <style type="text/css">
+        body {
+            padding: 8px;
+        }
+    </style>
+<<{/block}>>
+
+<<{block name="title-tool-bar"}>><<{/block}>>
+
+<<{block name="content"}>>
+<form id="form" class="layui-form">
+    <div class="layui-form-item">
+        <label class="layui-form-label">标题</label>
+        <div class="layui-input-block">
+            <input type="text" name="title" placeholder="" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">排序</label>
+        <div class="layui-input-block">
+            <input type="text" name="sort" value="100" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">简介</label>
+        <div class="layui-input-block">
+            <textarea name="summary" placeholder="请输入内容" class="layui-textarea"></textarea>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">状态</label>
+        <div class="layui-input-block">
+            <input type="radio" name="status" value="1" title="开启" checked>
+            <input type="radio" name="status" value="0" title="关闭">
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">详情</label>
+        <div class="layui-input-block">
+            <div class="cigo-edit item-editor-ueditor" cigo-edit-label="详情" cigo-edit-style="width:90%;"
+                 cigo-edit-helpblock="详情编辑--百度编辑器" cigo-edit-name="detail"></div>
+        </div>
+    </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">富文本图片地址(无地址输入#)</label>
+            <div class="layui-input-block">
+                <div class="cigo-edit item-input-multi"
+                     cigo-edit-label="多文字编辑"
+                     cigo-edit-type="text"
+                     cigo-edit-name="detail_links"
+                     cigo-edit-class="form-control"
+                     cigo-edit-input-num-limit="100"
+                     cigo-edit-placeholder="请输入文字..."
+                     cigo-edit-helpblock="多文字编辑，如对多图片配置对应链接"
+                     style="width: 60%;"
+                ></div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">富文本图片</label>
+            <div class="layui-input-block">
+                <div class="cigo-edit item-img-show pull-left" style="width: 48%"
+                     cigo-edit-label="普通上传" cigo-edit-img-num-limit="100"
+                     cigo-edit-name="detail_imgs"
+                     cigo-edit-img-list-row-item-num="4"
+                     cigo-edit-helpblock="多图片上传，可预览、修改，限制上传个数，对上传图片不做操作，原汁原味！"></div>
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button type="button" class="layui-btn submitForm" href="<<{:url('add')}>>" formId="form">立即提交</button>
+        </div>
+    </div>
+</form>
+<<{/block}>>
+
+<<{block name="js-footer"}>>
+    <script type="text/javascript">
+        var currentLayerIndex;
+        $(function () {
+            currentLayerIndex = parent.cigoLayer.getFrameIndex(window.name);
+
+            $('.submitForm').click(function (evt) {
+                formPost(evt, $(this), function (res) {
+                    if(res.code == 1){
+                        cigoLayer.msg(res.msg,{icon: 6});
+                        setTimeout(function () {
+                            parent.cigoLayer.close(currentLayerIndex);
+                            parent.refreshList();
+                        }, 1000);
+                    }else{
+                        cigoLayer.msg(res.msg,{icon: 5})
+                    }
+                }, function (res) {
+                    cigoLayer.msg(res.msg, {icon: 5});
+                });
+                return false;
+            });
+        })
+    </script>
+<<{/block}>>

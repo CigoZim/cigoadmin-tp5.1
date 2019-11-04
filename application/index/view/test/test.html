@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>uni-app官网</title>
+
+    <script type="text/javascript" src="http://www.usa-silversea.com/Public/Home/js/jquery.min.js"></script>
+
+    <!-- 微信 JS-SDK 如果不需要兼容微信小程序，则无需引用此 JS 文件。 -->
+    <script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.4.0.js"></script>
+    <!-- 支付宝的 JS-SDK 防止 404 需要动态加载，如果不需要兼容支付宝小程序，则无需引用此 JS 文件。 -->
+    <script type="text/javascript">
+        if (navigator.userAgent.indexOf('AlipayClient') > -1) {
+            document.writeln('<script src="https://appx/web-view.min.js"' + '>' + '<' + '/' + 'script>');
+        }
+    </script>
+    <!-- 百度 JS-SDK 如果不需要兼容百度小程序，则无需引用此 JS 文件。 -->
+    <script type="text/javascript" src="https://b.bdstatic.com/searchbox/icms/searchbox/js/swan-1.7.0.js"></script>
+    <!-- uni 的 SDK -->
+    <script type="text/javascript" src="https://js.cdn.aliyun.dcloud.net.cn/dev/uni-app/uni.webview.1.5.1.js"></script>
+</head>
+<body style="background-color: red;">
+
+
+<h1>我是服务器页面</h1>
+<h1>我是服务器页面</h1>
+<h1>我是服务器页面</h1>
+<h1>我是服务器页面</h1>
+<h1>我是服务器页面</h1>
+<h1>我是服务器页面</h1>
+<h1>我是服务器页面</h1>
+<h1>我是服务器页面</h1>
+<h1 id="clickMe">点我打开下一页</h1>
+
+<script type="text/javascript">
+    $(function () {
+        document.addEventListener('UniAppJSBridgeReady', function () {
+            $('#clickMe').click(function () {
+                console.log('asdfasdkfjalsdfjlasdkj');
+                uni.navigateTo({
+                    url: '/pages/tabbar/tabbar-1/nextpage'
+                });
+            });
+            uni.getEnv(function (res) {
+                console.log('当前环境：' + JSON.stringify(res));
+            });
+
+            uni.postMessage({
+                data: {
+                    action: 'postMessage'
+                }
+            });
+        });
+    });
+</script>
+
+</body>
+</html>

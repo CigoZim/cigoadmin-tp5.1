@@ -1,0 +1,56 @@
+<<{extend name="cigoadmin@public:editor"/}>>
+
+<<{block name="head-bottom"}>>
+<style type="text/css">
+    body {
+        padding: 8px;
+    }
+</style>
+<<{/block}>>
+
+<<{block name="title-tool-bar"}>><<{/block}>>
+
+<<{block name="content"}>>
+<form id="form" class="layui-form">
+    <select id="singleSelect" style="width: 200px;" lay-ignore=""></select>
+</form>
+<<{/block}>>
+
+<<{block name="js-footer"}>>
+<script type="text/javascript">
+    $(function () {
+        let i = 0;
+        $("#singleSelect").select2({
+            width: "100%",
+            placeholder: {id: "-1", text: "请输入域账户"},
+            ajax: {
+                url: '<<{:url("getSelectDataList")}>>',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        userName: params.term, // search term
+                        page: params.page
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data['data']
+                    };
+                },
+                cache: false
+            },
+            escapeMarkup: function (markup) {
+                return markup;
+            },
+            minimumInputLength: 1,
+        });
+
+
+        $('#singleSelect').on("change", function (e) {
+            let optionItemData = $(this).select2('data');
+            console.log(optionItemData);
+        });
+    });
+</script>
+<<{/block}>>

@@ -1,0 +1,246 @@
+<<{extend name="cigoadmin@public:editor"/}>>
+
+<<{block name="head-bottom"}>>
+<style type="text/css">
+    .layui-form-switch {
+        height: 28px;
+        line-height: 28px;
+    }
+
+    .layui-form-switch i {
+        top: 5px;
+    }
+</style>
+<<{/block}>>
+
+<<{block name="title-tool-bar"}>>
+<div style="padding: 8px 15px;">
+    <a class="btn btn-warning cancelBtn" href="#">
+        <i class="fa fa-reply"></i>
+        返回列表
+    </a>
+    <a class="btn btn-success editBtn" formId="form" href="<<{:url('edit')}>>">
+        <i class="fa fa-check"></i>
+        保存
+    </a>
+</div>
+<<{/block}>>
+
+<<{block name="content"}>>
+<form id="form">
+
+    <div style="padding: 20px; background-color: #F2F2F2;">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md6" style="float: left;width: 50%;">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+
+                        <div class="form-group">
+                            <div class="cigo-edit item-select"
+                                 cigo-edit-label="父级菜单"
+                                 cigo-edit-value='<<{$data["pid"]}>>'
+                                 cigo-edit-data-select-options='<<{$pList}>>'
+                                 cigo-edit-select-width="200"
+                                 cigo-edit-placeholder="--顶级菜单--"
+                                 cigo-edit-fun-item-change="parentChange"
+                                 cigo-edit-select-allowClear
+                                 cigo-edit-select-clearDefault></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="cigo-edit item-input"
+                                 cigo-edit-type="hidden"
+                                 cigo-edit-value="<<{$data['id']}>>"
+                                 cigo-edit-name="id"></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="cigo-edit item-input"
+                                 cigo-edit-type="hidden"
+                                 cigo-edit-value='<<{$data["pid"]}>>'
+                                 cigo-edit-name="pid"></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="cigo-edit item-input"
+                                 cigo-edit-type="hidden"
+                                 cigo-edit-value="<<{$data['path']}>>"
+                                 cigo-edit-name="path"></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="cigo-edit item-input"
+                                 cigo-edit-label="菜单/节点标题"
+                                 cigo-edit-type="text"
+                                 cigo-edit-class="form-control"
+                                 cigo-edit-style="width:260px;"
+                                 cigo-edit-name="title"
+                                 cigo-edit-value="<<{$data['title']}>>"
+                                 cigo-edit-placeholder="请输入标题..."></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="cigo-edit item-input"
+                                 cigo-edit-type="text"
+                                 cigo-edit-class="form-control"
+                                 cigo-edit-style="width:260px;"
+                                 cigo-edit-label="URL"
+                                 cigo-edit-name="url"
+                                 cigo-edit-value="<<{$data['url']}>>"
+                                 cigo-edit-placeholder="请输入链接URL..."
+                                 cigo-edit-helpblock="用于跳转的URL，支持带http://的URL或U函数参数格式"></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="cigo-edit item-select"
+                                 cigo-edit-label="URL Target"
+                                 cigo-edit-data-select-options='<<{$target_list}>>'
+                                 cigo-edit-name="target"
+                                 cigo-edit-value="<<{$data['target']}>>"
+                                 cigo-edit-select-width="190"></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="cigo-edit item-input"
+                                 cigo-edit-label="菜单Icon"
+                                 cigo-edit-type="text"
+                                 cigo-edit-class="form-control"
+                                 cigo-edit-style="width:260px;"
+                                 cigo-edit-name="icon"
+                                 cigo-edit-value="<<{$data['icon']}>>"
+                                 cigo-edit-placeholder="请输入Icon类名..."
+                                 cigo-edit-helpblock="菜单Icon使用阿里IconFont图标，请输入对应图标类名即可，如：图标&nbsp;<i class='cigo-iconfont cigo-icon-menu'></i>&nbsp;则输入'cigo-iconfont cigo-icon-menu'。如不显示则不填即可"></div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md6" style="float: left;width: 50%;">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+
+                        <div class="form-group">
+                            <div class="cigo-edit item-select"
+                                 cigo-edit-label="消息提示Label样式"
+                                 cigo-edit-name="label_class"
+                                 cigo-edit-value="<<{$data['label_class']}>>"
+                                 cigo-edit-data-select-options='<<{$label_class_list}>>'
+                                 cigo-edit-select-width="150"
+                                 cigo-edit-fun-createitem="selectItemLabelClass"
+                                 cigo-edit-helpblock="提示Label使用Bootstrap标签样式"></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="cigo-edit item-input"
+                                 cigo-edit-label="排序"
+                                 cigo-edit-type="text"
+                                 cigo-edit-class="form-control"
+                                 cigo-edit-style="width:260px;"
+                                 cigo-edit-name="sort"
+                                 cigo-edit-placeholder="请输入排序数字..."
+                                 cigo-edit-value="<<{$data['sort']}>>"
+                                 cigo-edit-helpblock="排序将根据数值大小倒序, 默认为50"></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="cigo-edit item-input"
+                                 cigo-edit-label="分组"
+                                 cigo-edit-type="text"
+                                 cigo-edit-class="form-control"
+                                 cigo-edit-style="width:260px;"
+                                 cigo-edit-name="group"
+                                 cigo-edit-value="<<{$data['group']}>>"
+                                 cigo-edit-placeholder="请输入菜单分组..."></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="cigo-edit item-input"
+                                 cigo-edit-label="分组排序"
+                                 cigo-edit-type="text"
+                                 cigo-edit-class="form-control"
+                                 cigo-edit-style="width:260px;"
+                                 cigo-edit-name="group_sort"
+                                 cigo-edit-value="<<{$data['group_sort']}>>"
+                                 cigo-edit-placeholder="请输入分组排序数字..."
+                                 cigo-edit-helpblock="排序将根据数值大小倒序, 默认为50"></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="cigo-edit item-select"
+                                 cigo-edit-label="是否显示在顶部菜单"
+                                 cigo-edit-data-select-options='[{"id":"1","text":"显 示"},{"id":"0","text":"隐 藏"}]'
+                                 cigo-edit-name="show_top_menu"
+                                 cigo-edit-value="<<{$data['show_top_menu']}>>"
+                                 cigo-edit-select-width="130"></div>
+                        </div>
+
+
+                        <div class="layui-form layui-form-item">
+                            <label class="layui-form-label" style="font-weight: 700;">系统菜单</label>
+                            <div class="layui-input-block">
+                                <<{if ($data['menu_flag'] == 1)}>>
+                                <input type="checkbox"
+                                       checked=""
+                                       name="menu_flag"
+                                       lay-skin="switch"
+                                       lay-filter="switchTest"
+                                       lay-text="系统菜单|仅权限节点"/>
+                                <<{else /}>>
+                                <input type="checkbox"
+                                       name="menu_flag"
+                                       lay-skin="switch"
+                                       lay-filter="switchTest"
+                                       lay-text="系统菜单|仅权限节点"/>
+                                <<{/if}>>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<<{/block}>>
+<<{block name="js-footer"}>>
+<script type="text/javascript">
+    let currPageIndex;
+    $(function () {
+        currPageIndex = parent.cigoLayer.getFrameIndex(window.name);
+        initEvent();
+        cigoForm.render();
+    });
+
+    function initEvent() {
+        $('input[name="title"]').focus();
+        $("#form").keydown(function (event) {
+            if ((event.which || event.keyCode) == 13) {
+                $('.editBtn:first').trigger('click');
+                return false;
+            }
+        });
+
+        $(".editBtn").click(function (evt) {
+            formPost(evt, $(this), function (data) {
+                cigoLayer.msg(data.msg, {icon: 6});
+                setTimeout(function () {
+                    parent.refreshList();
+                    parent.cigoLayer.close(currPageIndex);
+                }, 1500);
+            }, function (data) {
+                cigoLayer.msg(data.msg, {icon: 5});
+            });
+
+            return false;
+        });
+        $(".cancelBtn").click(function () {
+            parent.refreshList();
+            parent.cigoLayer.close(currPageIndex);
+            return false;
+        });
+    }
+
+    function selectItemLabelClass(item) {
+        let itemView = $(
+            '<span class="label ' + item.id + '">样式</span><span>&nbsp;&nbsp;' + item.text + '</span>'
+        );
+        return itemView;
+    }
+
+    function parentChange(optionItemData) {
+        let parentId = (optionItemData.length > 0) ? optionItemData[0].id : 0;
+        let parentPath = (optionItemData.length > 0) ? optionItemData[0].path : '';
+        $('input[name="pid"]:first').val(parentId);
+        $('input[name="path"]:first').val(parentPath + parentId + ',');
+    }
+</script>
+<<{/block}>>

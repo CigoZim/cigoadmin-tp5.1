@@ -1,0 +1,29 @@
+<<{extend name="cigoadmin@public:editor"/}>>
+
+<<{block name="tool-bar-btns"}>>
+<a class="btn btn-warning" href="#" onclick="history.go(-1);">
+    <i class="fa fa-reply"></i>
+    返回
+</a>
+<<{/block}>>
+
+<<{block name="content"}>>
+<form id="form">
+    <div class="panel">
+        <div class="panel-heading">
+            <span>当前Session信息：</span>
+        </div>
+        <div class="panel-body">
+            <<{php}>>
+            dump(Session::get());
+            <<{/php}>>
+        </div>
+    </div>
+</form>
+<<{/block}>>
+
+<<{block name="js-footer"}>>
+<script type="text/javascript">
+
+</script>
+<<{/block}>>

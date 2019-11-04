@@ -1,0 +1,77 @@
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
+body {
+    font-size: 12px;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:focus {
+    outline: none;
+    -moz-outline: none;
+}
+
+ul, li {
+    list-style: none;
+}
+
+.clear_both {
+    clear: both;
+}
+
+.divider {
+    clear: both;
+    height: 1px;
+    margin: 9px 0;
+    overflow: hidden;
+    background-color: #e5e5e5;
+}
+
+.cigo-icon {
+    width: 1em;
+    height: 1em;
+    vertical-align: -0.15em;
+    fill: currentColor;
+    overflow: hidden;
+}
+
+.cigo.color.red {
+    color: #d43f3a;;
+}
+
+.cigo.color.green {
+    color: #4cae4c;
+}
+
+.cigo.color.grey {
+    color: #c0c0c0;
+}
+
+.cigo.circle {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border-width: 1px;
+    border-style: solid;
+}
+
+.cigo.circle.red {
+    background: #d9534f;
+    border-color: #d43f3a;;
+}
+
+.cigo.circle.green {
+    background: #5cb85c;
+    border-color: #4cae4c;
+}
+
+.cigo.circle.grey {
+    background: #d2d2d2;
+    border-color: #c0c0c0;
+}

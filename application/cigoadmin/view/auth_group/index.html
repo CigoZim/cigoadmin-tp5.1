@@ -1,0 +1,141 @@
+<<{extend name="cigoadmin@public:editor"/}>>
+<<{block name="head-bottom"}>>
+<script type="text/javascript" src="__CIGO_PUBLIC__/cigoos/cigoList.js"></script>
+<style type="text/css">
+</style>
+<<{/block}>>
+
+<<{block name="tool-bar-btns"}>>
+<a class="btn btn-primary addBtn" href="<<{:url('add')}>>">
+    <i class="fa fa-plus-square"></i>
+    添加用户分组
+</a>
+<<{/block}>>
+
+<<{block name="content"}>>
+<div class="panel panel-info">
+    <div class="panel-heading">分组管理列表</div>
+    <table id="data-list" class="cigo-data-list table table-striped table-hover">
+        <tr>
+            <th>编号/分组名</th>
+            <th width="250">操作</th>
+        </tr>
+    </table>
+</div>
+<<{/block}>>
+
+<<{block name="js-footer"}>>
+<script type="text/javascript">
+    let listPlugin;
+    let pageInitFlag = false;
+    $(function () {
+        initView();
+        initEvent();
+        pageInitFlag = true;
+    });
+
+    function initView() {
+        //初始化列表插件
+        listPlugin = new CigoList({
+            listView: $('#data-list'),
+            dataSrcUrl: "<<{:url('getDataList')}>>",
+            renderItemViewFunc: createTr,
+            afterRenderFunc: function () {
+                cigoForm.render();
+            }
+        });
+        //刷新列表
+        listPlugin.renderList(true, true, false);
+    }
+
+    function refreshList() {
+        if (pageInitFlag) {
+            listPlugin.renderList(true, false, false);
+        }
+    }
+
+    function createTr(dataListView, itemSubViewList, listKey, dataItem, level, hasSubFlag, hasSubCls, itemIndex) {
+        itemSubViewList.push(
+            '<tr class="list-item" data-level="' + level + '">' +
+            '   <td>' +
+            '       ' + getTitleTab(level, '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;') +
+            '       ' + (
+                hasSubFlag
+                    ? '<i class="has-sub expand-icon cigo-iconfont cigo-icon-one" title="点击关闭"></i>'
+                    : '<i class="expand-icon cigo-iconfont cigo-icon-one" style="visibility: hidden;"></i>'
+            ) +
+            '       ' + dataItem['id'] + '&nbsp;&nbsp;' + dataItem['title'] + '</td>' +
+            '   <td>' +
+            '       ' + getStatusBtn(dataItem['id'], dataItem['status']) +
+            '       <a class="btn btn-info editbtn" href="#" data-id="' + dataItem['id'] + '">编辑</a>&nbsp;' +
+            '       <a class="btn btn-danger ajax-get confirm" href=\'<<{:url("setStatus", false, false)}>>' + Think.DEEP + 'id' + Think.DEEP + dataItem['id'] + Think.DEEP + 'status' + Think.DEEP + '-1' + Think.DEEP + 'ctrlTip' + Think.DEEP + '删除\' >删除</a>' +
+            '   </td>' +
+            '</tr>'
+        );
+    }
+
+
+    function getStatusBtn(id, status) {
+        let btnCls = 'btn-default';
+        switch (status) {
+            case 0:
+                btnCls = 'btn-warning';
+                break;
+            case 1:
+                btnCls = 'btn-success';
+                break;
+            default:
+                btnCls = 'btn-default';
+                break;
+        }
+        return '' +
+            '<a class="btn ' + btnCls + ' ajax-get confirm" style="min-width: 62px;text-align: center;" ' +
+            '   href=\'<<{:url("setStatus", false, false)}>>' +
+            Think.DEEP + 'id' + Think.DEEP + id + Think.DEEP + 'status' + Think.DEEP + Math.abs(1 - status) +
+            Think.DEEP + 'ctrlTip' + Think.DEEP + show_status_label(status, ['启用', '禁用']) + '\'>' +
+            '   ' + show_status_label(status, ['启 用', '已启用']) +
+            '</a>&nbsp;'
+    }
+
+    function initEvent() {
+        $('.addBtn').click(function () {
+            cigoLayer.open({
+                title: ['添加用户分组', 'font-size: 16px;font-weight: bold;'],
+                type: 2,
+                area: ['95%', '610px'],
+                fix: false,
+                scrollbar: false,
+                maxmin: true,
+                shade: [0.5, '#ffffff'],
+                shadeClose: false,
+                skin: 'layui-layer-rim',
+                content: "<<{:url('add', false, false)}>>",
+                cancel: function (index) {
+                    cigoLayer.close(index);
+                    return false;
+                }
+            });
+            return false;
+        });
+        $('#data-list').on('click', '.editbtn', function () {
+            cigoLayer.open({
+                title: ['修改用户分组', 'font-size: 16px;font-weight: bold;'],
+                type: 2,
+                area: ['95%', '610px'],
+                fix: false,
+                scrollbar: false,
+                maxmin: true,
+                shade: [0.5, '#ffffff'],
+                shadeClose: false,
+                skin: 'layui-layer-rim',
+                content: "<<{:url('edit', false, false)}>>" + Think.DEEP + 'id' + Think.DEEP + $(this).data('id'),
+                cancel: function (index) {
+                    cigoLayer.close(index);
+                    return false;
+                }
+            });
+            return false;
+        });
+    }
+</script>
+<<{/block}>>
