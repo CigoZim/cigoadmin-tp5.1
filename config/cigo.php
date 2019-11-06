@@ -70,6 +70,8 @@ return [
         'NO_NEED_AUTH_CHECK' => [
             'Index/index',
             'User/index',
+            '/getLeftMenuData',
+            '/getTopMenuData',
             '/getDataList'
         ],
     ]

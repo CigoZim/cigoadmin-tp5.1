@@ -43,7 +43,9 @@ trait AuthCheck
         }
         // 检查是否免授权检查
         if ($this->match(config('cigo.AUTH_CONFIG.NO_NEED_AUTH_CHECK'))) {
-            $this->getAllMenu();
+            $authRuleIds= $this->getAuthRuleIdsForLogUser();
+            $noNeedAuthRuleIds = $this->getNoNeedAuthRuleIds(config('cigo.AUTH_CONFIG.NO_NEED_AUTH_CHECK'));
+            $this->getAuthMenu(array_merge($authRuleIds, $noNeedAuthRuleIds));
             return AuthResult::AUTH_CHECK_NO_NEED_AUTH;
         }
         //检查访问路由是否被禁止
@@ -51,12 +53,12 @@ trait AuthCheck
             return AuthResult::AUTH_CHECK_ROUTE_FORBIDDEN;
         }
         //进行权限检查
-        $groupDataList = $this->getAuthGroupForLogUser();
-        $this->getAuthRule($groupDataList);
+        $authRuleIds = $this->getAuthRuleIdsForLogUser();
+        $this->getAuthRule($authRuleIds);
         if (!$this->authCheck()) {
             return AuthResult::AUTH_CHECK_FAIL;
         }
-        $this->getAuthMenu($groupDataList);
+        $this->getAuthMenu($authRuleIds);
         return AuthResult::AUTH_CHECK_SUCCESS;
     }
 
@@ -137,9 +139,20 @@ trait AuthCheck
         return $this->match($authUrlList);
     }
 
-    protected function getAuthGroupForLogUser()
+
+    protected function getNoNeedAuthRuleIds($noNeedAuthRules = array())
     {
-        //获取用户关联Group编号列表
+        return DB('AuthRule')
+            ->where([
+                ['url', 'in', $noNeedAuthRules],
+                ['status', 'eq', 1]
+            ])
+            ->column('id');
+    }
+
+    protected function getAuthRuleIdsForLogUser()
+    {
+        //获取用户关联被禁止Group编号列表
         $groupIdList = DB('AuthGroupAccess aga')
             ->field('aga.uid, aga.group_id, ag.pid, ag.path, ag.title, ag.rules')
             ->where([
@@ -148,7 +161,7 @@ trait AuthCheck
             ])
             ->leftJoin('auth_group ag', 'ag.id = aga.group_id')
             ->column('aga.group_id');
-        //获取符合要求的角色分组
+        //获取符合要求的有效角色分组
         $map = [
             ['aga.uid', '=', session(Request::module() . ManagerLogic::DATA_TAG_USERINFO)[ManagerLogic::DATA_TAG_ID]],
             ['ag.status', 'eq', '1'],
@@ -157,10 +170,23 @@ trait AuthCheck
         foreach ($groupIdList as $item) {
             $map[] = ['ag.path', 'not like', '%,' . $item . ',%'];
         }
-        return DB('AuthGroupAccess aga')
+        //获取所有菜单
+        $authRuleIdList = DB('AuthGroupAccess aga')
             ->where($map)
             ->leftJoin('auth_group ag', 'ag.id = aga.group_id')
             ->column('ag.rules');
+        $authRuleIds = array();
+        foreach ($authRuleIdList as $item) {
+            $authRuleIds = array_merge(explode(',', $item), $authRuleIds);
+        }
+        $authRuleIds = array_unique($authRuleIds);
+        //过滤无效菜单
+        return DB('AuthRule')
+            ->where([
+                ['id', 'in', $authRuleIds],
+                ['status', 'eq', 1]
+            ])
+            ->column('id');
     }
 
     protected function getAllMenu()
@@ -183,25 +209,25 @@ trait AuthCheck
         $this->getTopTree($topMenuTreeList, $this->authTopMenuDataList);
     }
 
-    protected function getAuthRule($groupDataList = array())
+    protected function getAuthRule($authRuleIds = array())
     {
         //获取符合要求的菜单或者功能节点
         $this->authRuleDataList = DB('AuthRule ar')
             ->where([
                 ['ar.status', 'eq', 1],
-                ['ar.id', 'in', array_unique(explode(',', trim(implode(',', $groupDataList), ',')))]
+                ['ar.id', 'in', array_unique(explode(',', trim(implode(',', $authRuleIds), ',')))]
             ])
             ->select();
     }
 
-    protected function getAuthMenu($groupDataList = array())
+    protected function getAuthMenu($authRuleIds = array())
     {
         //左侧菜单
         $model = new AuthRule();
         $leftMenuList = $model->getList([
             ['status', 'eq', 1],
             ['menu_flag', 'eq', 1],
-            ['id', 'in', array_unique(explode(',', trim(implode(',', $groupDataList), ',')))]
+            ['id', 'in', array_unique(explode(',', trim(implode(',', $authRuleIds), ',')))]
         ]);
         $this->convertToTree($leftMenuList, $this->authLeftMenuDataList, 0, 'pid');
         //顶部菜单
@@ -209,7 +235,7 @@ trait AuthCheck
             ['status', 'eq', 1],
             ['menu_flag', 'eq', 1],
             ['show_top_menu', 'eq', 1],
-            ['id', 'in', array_unique(explode(',', trim(implode(',', $groupDataList), ',')))]
+            ['id', 'in', array_unique(explode(',', trim(implode(',', $authRuleIds), ',')))]
         ]);
         $topMenuTreeList = array();
         $this->convertToTree($topMenuList, $topMenuTreeList, 0, 'pid', false);
