@@ -69,6 +69,7 @@ return [
         //是否需要权限检查
         'NO_NEED_AUTH_CHECK' => [
             'Index/index',
+            'User/index',
             '/getDataList'
         ],
     ]

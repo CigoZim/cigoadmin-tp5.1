@@ -84,7 +84,7 @@ trait AuthCheck
      * @param array $range
      * @return bool
      */
-    public function match($range = [])
+    private function match($range = [])
     {
         $range = is_array($range)
             ? $range
@@ -116,16 +116,25 @@ trait AuthCheck
         $ruleList = DB('AuthRule')
             ->where([
                 ['status', 'eq', 1],
-                ['url', 'eq', $path]
+                ['url', 'in', [
+                    //特定控制器下所有操作
+                    strtolower(Request::controller()) . config('template.view_depr'),
+                    //所有控制器下特定操作操作
+                    strtolower(config('template.view_depr') . Request::action()),
+                    //特定控制器特定操作
+                    strtolower(Request::controller()) . config('template.view_depr') . strtolower(Request::action()),
+                    //所有请求
+                    '*'
+                    //TODO 特定路由?、特定url?
+                ]]
             ])->find();
         return $ruleList === null ? true : false;
     }
 
     protected function authCheck()
     {
-        $path = strtolower(Request::controller()) . '/' . strtolower(Request::action());
         $authUrlList = array_map('strtolower', array_column($this->authRuleDataList, 'url'));
-        return in_array($path, $authUrlList);
+        return $this->match($authUrlList);
     }
 
     protected function getAuthGroupForLogUser()
