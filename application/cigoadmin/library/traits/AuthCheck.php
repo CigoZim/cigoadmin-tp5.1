@@ -43,7 +43,7 @@ trait AuthCheck
         }
         // 检查是否免授权检查
         if ($this->match(config('cigo.AUTH_CONFIG.NO_NEED_AUTH_CHECK'))) {
-            $authRuleIds= $this->getAuthRuleIdsForLogUser();
+            $authRuleIds = $this->getAuthRuleIdsForLogUser();
             $noNeedAuthRuleIds = $this->getNoNeedAuthRuleIds(config('cigo.AUTH_CONFIG.NO_NEED_AUTH_CHECK'));
             $this->getAuthMenu(array_merge($authRuleIds, $noNeedAuthRuleIds));
             return AuthResult::AUTH_CHECK_NO_NEED_AUTH;
@@ -138,7 +138,6 @@ trait AuthCheck
         $authUrlList = array_map('strtolower', array_column($this->authRuleDataList, 'url'));
         return $this->match($authUrlList);
     }
-
 
     protected function getNoNeedAuthRuleIds($noNeedAuthRules = array())
     {
