@@ -27,7 +27,7 @@
         "overtrue/wechat": "v4.1.31",
         "yansongda/pay": "v2.8.3",
         "topthink/think-swoole": "v2.0.17",
-        "phpmailer/phpmailer": "v6.0.7"
+        "phpmailer/phpmailer": "v6.1.6"
     },
     "autoload": {
         "psr-4": {
