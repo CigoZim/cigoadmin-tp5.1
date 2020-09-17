@@ -35,7 +35,7 @@
 
 ## **在线演示**
 
-- http://admin.demo.cigoadmin.com
+- https://admin-tp51.cigoadmin.com
 
 - 用户名：manager
 - 密　码：123456
